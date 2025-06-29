@@ -9,166 +9,304 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* General Body Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #9a0200;
             background-image: linear-gradient(to bottom right, #9a0200, #5c0100);
         }
-        /* Style for the canvas to make it responsive but with a max-width */
+        
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #9a0200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #loading-logo {
+            max-width: 80%;
+            width: 400px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* NEW Main Page Loader */
+        #loading-screen .loader {
+          width: 40px;
+          height: 30px;
+          --c:no-repeat linear-gradient(#ffffff 0 0);
+          background:
+            var(--c) 0    100%/8px 30px,
+            var(--c) 50%  100%/8px 20px,
+            var(--c) 100% 100%/8px 10px;
+          position: relative;
+          clip-path: inset(-100% 0);
+        }
+        #loading-screen .loader:before{
+          content: "";
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #fff;
+          left: -16px;
+          top: 0;
+          animation:
+            l5-1 2s   linear infinite,
+            l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+        }
+        @keyframes l5-1 {
+          0%   {left:-16px;transform:translateY(-8px)}
+          100% {left:calc(100% + 8px);transform:translateY(22px)}
+        }
+        @keyframes l5-2 {
+          100% {top:-0.1px}
+        }
+        
+        /* NEW Preview Area Loader */
+        #preview-loader {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            --c:no-repeat linear-gradient(#F97316 0 0); /* Orange color */
+            background:
+                var(--c) center/100% 10px,
+                var(--c) center/10px 100%;
+        }
+        #preview-loader:before {
+            content:'';
+            position: absolute;
+            inset: 0;
+            background:
+                var(--c) 0    0,
+                var(--c) 100% 0,
+                var(--c) 0    100%,
+                var(--c) 100% 100%;
+            background-size: 15.5px 15.5px;
+            animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
+        }
+        @keyframes l16 {
+            33%  {inset:-10px;transform: rotate(0deg)}
+            66%  {inset:-10px;transform: rotate(90deg)}
+            100% {inset:0   ;transform: rotate(90deg)}
+        }
+        
+        /* NEW Shutter Animation */
+        .preview-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .shutter {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: #111;
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+        #shutter-top { top: 0; transform: scaleY(1); }
+        #shutter-bottom { bottom: 0; transform-origin: bottom; transform: scaleY(1); }
+        .shutter.open {
+            transform: scaleY(0);
+        }
+
+        /* Hide main content initially */
+        #main-content {
+            display: none;
+        }
+
+        /* Canvas Styles */
         canvas {
             max-width: 100%;
             height: auto;
             border-radius: 0.5rem;
         }
-        /* Custom transition for smoother effects */
         .custom-transition {
             transition: all 0.3s ease-in-out;
         }
-        /* Highlight for selected frame using an orange color */
         .frame-selected {
             transform: scale(1.05);
             box-shadow: 0 0 0 4px #F97316; /* orange-500 */
         }
-        /* Hide default file input */
         input[type="file"] {
             display: none;
         }
-        /* Frosted glass effect for containers */
         .glass-container {
-            background: rgba(0, 0, 0, 0.25); /* semi-transparent black */
+            background: rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Styles for the new sticky header */
+        /* Sticky Header Styles */
         #app-header {
             transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out;
         }
         #app-header.scrolled {
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
-            background: rgba(0, 0, 0, 0.4); /* Darken slightly on scroll */
+            background: rgba(0, 0, 0, 0.4);
         }
         #app-logo {
             transition: max-height 0.3s ease-in-out;
-            max-height: 50px; /* Initial height for larger logo */
+            max-height: 50px;
             width: auto;
         }
         #app-header.scrolled #app-logo {
-            max-height: 30px; /* Scrolled height */
+            max-height: 30px;
         }
     </style>
 </head>
 <body class="text-gray-200">
 
-    <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
-        <div class="container mx-auto flex justify-center items-center">
-            <img id="app-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.style.display='none'; document.getElementById('text-header').style.display='block';">
-            <div id="text-header" style="display:none;" class="text-center">
-                 <h1 class="text-4xl md:text-5xl font-bold text-white">DPblast!</h1>
-                 <p class="text-lg text-gray-300">by DECS</p>
-            </div>
-        </div>
-    </header>
-
-    <div class="container mx-auto px-4 py-8" style="padding-top: 120px;"> 
-        
-        <div class="glass-container flex justify-center items-center gap-4 md:gap-6 mb-8 p-4 rounded-xl max-w-lg mx-auto">
-            <img src="decs.png" alt="DECS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
-            <img src="acoes.png" alt="ACOES Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
-            <img src="ccss.png" alt="CCSS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
-        </div>
-
-        <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
-            <div class="space-y-6">
-                
-                <div>
-                    <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
-                    <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
-                </div>
-
-                <div>
-                    <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
-                    <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                        <option value="" disabled selected>Choose your section...</option>
-                        <option value="1-CpE1">1-CpE1</option>
-                        <option value="1-CpE2">1-CpE2</option>
-                        <option value="1-CpE3">1-CpE3</option>
-                        <option value="1-CpE4">1-CpE4</option>
-                        <option value="1-CS1">1-CS1</option>
-                        <option value="1-CS2">1-CS2</option>
-                        <option value="1-CS3">1-CS3</option>
-                        <option value="1-CS4">1-CS4</option>
-                    </select>
-                </div>
-
-                <div>
-                    <h3 class="text-sm font-medium text-gray-300 mb-2">3. Choose Your Frame</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
-                            <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';">
-                        </button>
-                        <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
-                            <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';">
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">
-                        4. Upload Your Picture
-                    </label>
-                    <input type="file" id="image-upload-btn" accept="image/*">
-                    <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
-                </div>
-
-                <div>
-                    <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
-                    <div class="bg-black/20 rounded-lg flex items-center justify-center aspect-square">
-                       <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
-                       <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
-                        Download Image
-                    </button>
-                    <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
-                 
-                    <div>
-                        <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
-                        <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
-                        <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
-                            Copy Caption
-                        </button>
-                        <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
+        <div class="loader"></div>
     </div>
+    
+    <!-- Main Website Content -->
+    <div id="main-content">
+        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
+            <div class="container mx-auto flex justify-center items-center">
+                <img id="app-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.style.display='none'; document.getElementById('text-header').style.display='block';">
+                <div id="text-header" style="display:none;" class="text-center">
+                     <h1 class="text-4xl md:text-5xl font-bold text-white">DPblast!</h1>
+                     <p class="text-lg text-gray-300">by DECS</p>
+                </div>
+            </div>
+        </header>
 
-    <footer class="text-center py-10 px-4 mt-8 bg-black/30">
-        <p class="text-gray-300 font-semibold mb-4">Follow Us on Facebook!</p>
-        <div class="flex justify-center flex-wrap gap-4 mb-6">
-             <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
-             <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
+        <div class="container mx-auto px-4 py-8" style="padding-top: 120px;"> 
+            <div class="glass-container flex justify-center items-center gap-4 md:gap-6 mb-8 p-4 rounded-xl max-w-lg mx-auto">
+                <img src="decs.png" alt="DECS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
+                <img src="acoes.png" alt="ACOES Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
+                <img src="ccss.png" alt="CCSS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
+            </div>
+
+            <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
+                <div class="space-y-6">
+                    
+                    <div>
+                        <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
+                        <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
+                    </div>
+
+                    <div>
+                        <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
+                        <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="" disabled selected>Choose your section...</option>
+                            <option value="1-CpE1">1-CpE1</option>
+                            <option value="1-CpE2">1-CpE2</option>
+                            <option value="1-CpE3">1-CpE3</option>
+                            <option value="1-CpE4">1-CpE4</option>
+                            <option value="1-CS1">1-CS1</option>
+                            <option value="1-CS2">1-CS2</option>
+                            <option value="1-CS3">1-CS3</option>
+                            <option value="1-CS4">1-CS4</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-300 mb-2">3. Choose Your Frame</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
+                                <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';">
+                            </button>
+                            <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
+                                <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">
+                            4. Upload Your Picture
+                        </label>
+                        <input type="file" id="image-upload-btn" accept="image/*">
+                        <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
+                        <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
+                           <div id="shutter-top" class="shutter"></div>
+                           <div id="shutter-bottom" class="shutter"></div>
+                           <div id="preview-loader" style="display: none;"></div>
+                           <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
+                           <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
+                            Download Image
+                        </button>
+                        <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
+                     
+                        <div>
+                            <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
+                            <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
+                            <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
+                                Copy Caption
+                            </button>
+                            <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
         </div>
-        <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
-        <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
-        <p class="text-xs text-gray-400 mt-4">Developed using HTML-CSS-JS</p>
-	<p class="text-xs text-gray-400 mt-4">Designed and Produced by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS). </p>
-        <p class="text-sm text-white mt-2 font-semibold">Proud to be DECS.</p>
-        <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
-    </footer>
 
-    <div class="fixed bottom-4 right-4 z-50">
-        <img src="decs_logo_small.png" alt="DECS Small Logo" class="w-16 h-16" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
+        <footer class="text-center py-10 px-4 mt-8 bg-black/30">
+            <p class="text-gray-300 font-semibold mb-4">Follow Us on Facebook!</p>
+            <div class="flex justify-center flex-wrap gap-4 mb-6">
+                 <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
+                 <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
+            </div>
+            <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
+            <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
+            <p class="text-xs text-gray-400 mt-4">Developed using HTML-CSS-JS</p>
+            <p class="text-xs text-gray-400 mt-4">Designed and Produced by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS). </p>
+            <p class="text-sm text-white mt-2 font-semibold">Proud to be DECS.</p>
+            
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-400">You are visitor number:</p>
+                <p id="visitor-count" class="text-lg font-bold text-white">0</p>
+            </div>
+            
+            <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
+        </footer>
+
+        <div class="fixed bottom-4 right-4 z-50">
+            <img src="decs_logo_small.png" alt="DECS Small Logo" class="w-16 h-16" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
+        </div>
     </div>
 
     <script>
+        // --- Loading Screen Logic ---
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                }, 500);
+            }, 3000); 
+        });
+
         // --- Sticky Header Scroll Logic ---
         const header = document.getElementById('app-header');
         window.addEventListener('scroll', () => {
@@ -178,6 +316,19 @@
                 header.classList.remove('scrolled');
             }
         });
+        
+        // --- Visitor Count Logic ---
+        let count = localStorage.getItem('visitorCount');
+        if (count === null) {
+            count = 1;
+        } else {
+            count = parseInt(count) + 1;
+        }
+        localStorage.setItem('visitorCount', count);
+        const visitorCountElement = document.getElementById('visitor-count');
+        if(visitorCountElement) {
+            visitorCountElement.textContent = count;
+        }
 
         // --- DOM Element References ---
         const nameInput = document.getElementById('name-input');
@@ -188,6 +339,9 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const previewLoader = document.getElementById('preview-loader');
+        const shutterTop = document.getElementById('shutter-top');
+        const shutterBottom = document.getElementById('shutter-bottom');
         const downloadBtn = document.getElementById('download-btn');
         const downloadError = document.getElementById('download-error');
         const captionOutput = document.getElementById('caption-output');
@@ -215,7 +369,6 @@
                 frameImage.src = selectedFrame;
                 frameImage.onload = () => checkAndDrawImage();
                 frameImage.onerror = () => {
-                    const previewContainer = document.getElementById('canvas-placeholder');
                     previewContainer.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
                     previewContainer.classList.add('text-red-400');
                 }
@@ -267,10 +420,37 @@
 
         // --- Core Functions ---
 
+        function showPreviewLoader() {
+            canvas.classList.add('hidden');
+            canvasPlaceholder.classList.add('hidden');
+            previewLoader.style.display = 'block';
+        }
+
+        function hidePreviewLoader() {
+            previewLoader.style.display = 'none';
+        }
+
+        function triggerShutterAnimation() {
+            // Reset state
+            shutterTop.classList.remove('open');
+            shutterBottom.classList.remove('open');
+
+            // Open shutter
+            setTimeout(() => {
+                canvas.classList.remove('hidden');
+                shutterTop.classList.add('open');
+                shutterBottom.classList.add('open');
+            }, 100); // slight delay to ensure canvas is ready
+        }
+
         function checkAndDrawImage() {
             if (selectedFrame && userImage) {
                 isReadyToDraw = true;
-                draw();
+                showPreviewLoader();
+                // Simulate processing time before drawing
+                setTimeout(() => {
+                    draw();
+                }, 500);
             } else {
                 isReadyToDraw = false;
             }
@@ -280,10 +460,6 @@
         function draw() {
             if (!isReadyToDraw) return;
             
-            canvas.classList.remove('hidden');
-            canvasPlaceholder.classList.add('hidden');
-            canvasPlaceholder.textContent = '';
-
             const canvasSize = canvas.width;
             ctx.clearRect(0, 0, canvasSize, canvasSize);
 
@@ -305,6 +481,10 @@
 
             ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
+
+            hidePreviewLoader();
+            triggerShutterAnimation();
+            updateButtonStates();
         }
 
         function updateCaption() {
@@ -314,7 +494,7 @@
             if (name && section) {
                 let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
                 
-                captionOutput.value = `Meet ${name}, a driven student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast this June 30, 2025 (Monday) as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞 #𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬\n Make yours here at comsci-decs.github.io/DPblaster`;
+                captionOutput.value = `Meet ${name}, a driven student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast this June 30, 2025 (Monday) as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
             } else {
                 captionOutput.value = '';
             }
