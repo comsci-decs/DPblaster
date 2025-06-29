@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MasterFRAME by DECS</title>
+    <title>FRAMEit by DECS</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -14,6 +14,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #9a0200;
+            background-image: linear-gradient(to bottom right, #9a0200, #5c0100);
         }
         /* Style for the canvas to make it responsive but with a max-width */
         canvas {
@@ -25,95 +27,114 @@
         .custom-transition {
             transition: all 0.3s ease-in-out;
         }
-        /* Highlight for selected frame */
+        /* Highlight for selected frame using an orange color */
         .frame-selected {
             transform: scale(1.05);
-            box-shadow: 0 0 0 4px #4f46e5; /* Indigo-500 */
+            box-shadow: 0 0 0 4px #F97316; /* orange-500 */
         }
         /* Hide default file input */
         input[type="file"] {
             display: none;
         }
+        /* Frosted glass effect for containers */
+        .glass-container {
+            background: rgba(0, 0, 0, 0.25); /* semi-transparent black */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+<body class="text-gray-200">
 
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-indigo-600 dark:text-indigo-400">MasterFRAME</h1>
-            <p class="text-lg text-gray-600 dark:text-gray-400">by DECS</p>
+        <header class="text-center mb-6">
+            <h1 class="text-4xl md:text-5xl font-bold text-white">MasterFRAME</h1>
+            <p class="text-lg text-gray-300">by DECS-CCSS-ACOES</p>
         </header>
 
-        <main class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Left Column: Controls -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="space-y-6">
-                    <!-- Step 1: Name Input -->
-                    <div>
-                        <label for="name-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">1. Enter Your Name</label>
-                        <input type="text" id="name-input" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Juan Dela Cruz">
-                    </div>
+        <!-- Logo Placeholders in a Glass Container -->
+        <div class="glass-container flex justify-center items-center gap-4 md:gap-8 mb-8 p-4 rounded-xl max-w-sm mx-auto">
+            <img src="decs.png" alt="DECS Logo" class="rounded-full">
+            <img src="acoes.png" alt="ACOES Logo" class="rounded-full">
+            <img src="ccss.png" alt="CCSS Logo" class="rounded-full">
+        </div>
 
-                    <!-- Step 2: Choose Frame -->
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">2. Choose Your Frame</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- CPE Frame Button - PNG Path -->
-                            <!-- Make sure 'cpe_frame.png' is in the same folder as your HTML file -->
-                            <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
-                                <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition">
-                            </button>
-                            <!-- CS Frame Button - PNG Path -->
-                            <!-- Make sure 'cs_frame.png' is in the same folder as your HTML file -->
-                            <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
-                                <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition">
-                            </button>
-                        </div>
-                    </div>
+        <!-- Main Content Box -->
+        <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
+            <div class="space-y-6">
+                
+                <!-- Step 1: Name Input -->
+                <div>
+                    <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
+                    <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
+                </div>
 
-                    <!-- Step 3: Upload Picture -->
-                    <div>
-                        <label for="image-upload-btn" class="w-full inline-block bg-indigo-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-indigo-700 custom-transition shadow">
-                            3. Upload Your Picture
-                        </label>
-                        <input type="file" id="image-upload-btn" accept="image/*">
-                        <p id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">No file chosen</p>
+                <!-- Step 2: Choose Frame -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">2. Choose Your Frame</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- CPE Frame Button -->
+                        <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
+                            <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition">
+                        </button>
+                        <!-- CS Frame Button -->
+                        <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
+                            <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition">
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Preview and Actions -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="space-y-6">
-                    <!-- Canvas for Image Preview -->
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preview</h3>
-                        <div class="bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square">
-                           <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
-                           <span id="canvas-placeholder" class="text-gray-500">Your image will appear here</span>
-                        </div>
-                    </div>
+                <!-- Step 3: Upload Picture -->
+                <div>
+                    <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">
+                        3. Upload Your Picture
+                    </label>
+                    <input type="file" id="image-upload-btn" accept="image/*">
+                    <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
+                </div>
 
-                    <!-- Download and Caption Actions -->
-                    <div>
-                        <button id="download-btn" class="w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-600 custom-transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
-                            Download Image
-                        </button>
-                         <p id="download-error" class="text-sm text-red-500 mt-2 text-center h-5"></p>
+                <!-- Step 4: Preview -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">4. Preview</h3>
+                    <div class="bg-black/20 rounded-lg flex items-center justify-center aspect-square">
+                       <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
+                       <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
                     </div>
-                     <div>
-                        <label for="caption-output" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Generated Caption</label>
-                        <textarea id="caption-output" rows="4" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2" readonly></textarea>
-                        <button id="copy-caption-btn" class="w-full mt-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 custom-transition shadow disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                </div>
+
+                <!-- Step 5: Download and Caption -->
+                <div class="space-y-4">
+                    <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
+                        Download Image
+                    </button>
+                    <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
+                 
+                    <div>
+                        <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
+                        <textarea id="caption-output" rows="4" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
+                        <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
                             Copy Caption
                         </button>
-                        <div id="copy-feedback" class="text-sm text-green-500 mt-2 text-center h-5"></div>
+                        <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-10 px-4 mt-8">
+        <p class="text-gray-300 font-semibold mb-4">Follow Us</p>
+        <div class="flex justify-center flex-wrap gap-4 mb-6">
+             <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
+             <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
+        </div>
+        <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
+        <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
+        <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
+    </footer>
 
     <script>
         // --- DOM Element References ---
@@ -161,7 +182,7 @@
                 frameImage.onerror = () => {
                     const previewContainer = document.getElementById('canvas-placeholder');
                     previewContainer.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
-                    previewContainer.classList.add('text-red-500');
+                    previewContainer.classList.add('text-red-400');
                 }
             });
         });
@@ -210,76 +231,4 @@
                 document.execCommand('copy');
                 copyFeedback.textContent = 'Caption copied!';
                 setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-            } catch (err) {
-                copyFeedback.textContent = 'Failed to copy!';
-                 setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-            }
-        });
-
-        // --- Core Functions ---
-
-        /**
-         * Checks if both a frame and an image are selected, then calls the draw function.
-         */
-        function checkAndDrawImage() {
-            if (selectedFrame && userImage) {
-                isReadyToDraw = true;
-                draw();
-            } else {
-                isReadyToDraw = false;
-            }
-            updateButtonStates();
-        }
-        
-        /**
-         * Draws the user's image and the frame onto the canvas.
-         */
-        function draw() {
-            if (!isReadyToDraw) return;
-            
-            canvas.classList.remove('hidden');
-            canvasPlaceholder.classList.add('hidden');
-            canvasPlaceholder.textContent = ''; // Clear any error messages
-
-            const canvasSize = canvas.width;
-            
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvasSize, canvasSize);
-
-            // --- DRAWING LOGIC ---
-            // 1. Draw the user's uploaded image, scaled to fill the entire canvas
-            ctx.drawImage(uploadedImage, 0, 0, canvasSize, canvasSize);
-
-            // 2. Draw the transparent PNG frame on top of the user's image
-            ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
-        }
-
-        /**
-         * Updates the caption in the textarea based on the name input.
-         */
-        function updateCaption() {
-            const name = nameInput.value.trim();
-            if (name) {
-                captionOutput.value = `I am ${name}, and I am proud to be part of this community!\n\n#MasterFRAME #DECS`;
-            } else {
-                captionOutput.value = '';
-            }
-             updateButtonStates();
-        }
-
-        /**
-         * Enables or disables the download and copy buttons based on the current state.
-         */
-        function updateButtonStates() {
-            // Enable download button only if image is drawn
-            downloadBtn.disabled = !isReadyToDraw;
-            
-            // Enable copy button only if there is text in the caption box
-            copyCaptionBtn.disabled = captionOutput.value.length === 0;
-        }
-
-        // --- Initial Setup ---
-        updateCaption(); // Initialize caption state
-    </script>
-</body>
-</html>
+            } catch (er
