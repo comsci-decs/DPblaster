@@ -54,21 +54,6 @@ Creating your custom profile picture is simple. Follow these steps on the websit
 
 ---
 
-## 📂 File Structure
-
-The project is contained within a single `index.html` file and relies on a few local image assets.
-
-/
-├── index.html  # The main and only HTML file containing all the structure, styles, and scripts.
-├── dpblast_logo.png      # The main logo for the sticky header.
-├── cpe_frame.png         # The frame for Computer Engineering students.
-├── cs_frame.png          # The frame for Computer Science students.
-├── decs.png              # DECS organization logo.
-├── acoes.png             # ACOES organization logo.
-├── ccss.png              # CCSS organization logo.
-└── decs_logo_small.png   # The small, fixed logo at the bottom right.
----
-
 ## 🛠️ Setup for GitHub Pages
 
 To deploy this project on your own GitHub Pages for free:
