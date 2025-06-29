@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPblaster!</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom Styles -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -64,12 +61,9 @@
 </head>
 <body class="text-gray-200">
 
-    <!-- New Fixed Header -->
     <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
         <div class="container mx-auto flex justify-center items-center">
-            <!-- Assumes your logo is named dpblast_logo.png and is in the same folder -->
             <img id="app-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.style.display='none'; document.getElementById('text-header').style.display='block';">
-            <!-- Fallback text header if logo fails to load -->
             <div id="text-header" style="display:none;" class="text-center">
                  <h1 class="text-4xl md:text-5xl font-bold text-white">DPblast!</h1>
                  <p class="text-lg text-gray-300">by DECS</p>
@@ -77,60 +71,65 @@
         </div>
     </header>
 
-    <!-- Main Content Wrapper with Padding for Fixed Header -->
     <div class="container mx-auto px-4 py-8" style="padding-top: 120px;"> 
         
-        <!-- Organization Logos -->
         <div class="glass-container flex justify-center items-center gap-4 md:gap-6 mb-8 p-4 rounded-xl max-w-lg mx-auto">
             <img src="decs.png" alt="DECS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
             <img src="acoes.png" alt="ACOES Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
             <img src="ccss.png" alt="CCSS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
         </div>
 
-        <!-- Main Content Box -->
         <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
             <div class="space-y-6">
                 
-                <!-- Step 1: Name Input -->
                 <div>
                     <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
                     <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
                 </div>
 
-                <!-- Step 2: Choose Frame -->
                 <div>
-                    <h3 class="text-sm font-medium text-gray-300 mb-2">2. Choose Your Frame</h3>
+                    <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
+                    <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="" disabled selected>Choose your section...</option>
+                        <option value="1-CpE1">1-CpE1</option>
+                        <option value="1-CpE2">1-CpE2</option>
+                        <option value="1-CpE3">1-CpE3</option>
+                        <option value="1-CpE4">1-CpE4</option>
+                        <option value="1-CS1">1-CS1</option>
+                        <option value="1-CS2">1-CS2</option>
+                        <option value="1-CS3">1-CS3</option>
+                        <option value="1-CS4">1-CS4</option>
+                    </select>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">3. Choose Your Frame</h3>
                     <div class="grid grid-cols-2 gap-4">
-                        <!-- CPE Frame Button -->
                         <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
                             <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';">
                         </button>
-                        <!-- CS Frame Button -->
                         <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
                             <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';">
                         </button>
                     </div>
                 </div>
 
-                <!-- Step 3: Upload Picture -->
                 <div>
                     <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">
-                        3. Upload Your Picture
+                        4. Upload Your Picture
                     </label>
                     <input type="file" id="image-upload-btn" accept="image/*">
                     <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
                 </div>
 
-                <!-- Step 4: Preview -->
                 <div>
-                    <h3 class="text-sm font-medium text-gray-300 mb-2">4. Preview</h3>
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
                     <div class="bg-black/20 rounded-lg flex items-center justify-center aspect-square">
                        <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
                        <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
                     </div>
                 </div>
 
-                <!-- Step 5: Download and Caption -->
                 <div class="space-y-4">
                     <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
                         Download Image
@@ -139,7 +138,7 @@
                  
                     <div>
                         <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
-                        <textarea id="caption-output" rows="4" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
+                        <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
                         <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
                             Copy Caption
                         </button>
@@ -151,21 +150,20 @@
         </main>
     </div>
 
-    <!-- Footer -->
     <footer class="text-center py-10 px-4 mt-8 bg-black/30">
-        <p class="text-gray-300 font-semibold mb-4">Follow Us</p>
+        <p class="text-gray-300 font-semibold mb-4">Follow Us on Facebook!</p>
         <div class="flex justify-center flex-wrap gap-4 mb-6">
              <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
              <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
         </div>
         <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
         <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
-        <p class="text-xs text-gray-400 mt-4">Developed using HTML/CSS/JS</p>
+        <p class="text-xs text-gray-400 mt-4">Developed using HTML-CSS-JS</p>
+	<p class="text-xs text-gray-400 mt-4">Designed and Produced by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS). </p>
         <p class="text-sm text-white mt-2 font-semibold">Proud to be DECS.</p>
         <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
     </footer>
 
-    <!-- Fixed Corner Logo -->
     <div class="fixed bottom-4 right-4 z-50">
         <img src="decs_logo_small.png" alt="DECS Small Logo" class="w-16 h-16" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
     </div>
@@ -183,6 +181,7 @@
 
         // --- DOM Element References ---
         const nameInput = document.getElementById('name-input');
+        const sectionSelect = document.getElementById('section-select');
         const frameButtons = document.querySelectorAll('.frame-btn');
         const imageUploadBtn = document.getElementById('image-upload-btn');
         const fileNameDisplay = document.getElementById('file-name');
@@ -205,24 +204,16 @@
         const uploadedImage = new Image();
         
         // --- Event Listeners ---
-
-        // 1. Name Input: Update caption on keyup
         nameInput.addEventListener('keyup', updateCaption);
+        sectionSelect.addEventListener('change', updateCaption);
 
-        // 2. Frame Selection Buttons
         frameButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // Remove selection from all buttons
                 frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
-                // Add selection to the clicked button
                 button.firstElementChild.classList.add('frame-selected');
-                
                 selectedFrame = button.dataset.frameSrc;
                 frameImage.src = selectedFrame;
-                frameImage.onload = () => {
-                    checkAndDrawImage();
-                };
-                // Handle image loading errors
+                frameImage.onload = () => checkAndDrawImage();
                 frameImage.onerror = () => {
                     const previewContainer = document.getElementById('canvas-placeholder');
                     previewContainer.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
@@ -231,7 +222,6 @@
             });
         });
 
-        // 3. Image Upload Button
         imageUploadBtn.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -239,9 +229,7 @@
                 reader.onload = (e) => {
                     userImage = e.target.result;
                     uploadedImage.src = userImage;
-                    uploadedImage.onload = () => {
-                         checkAndDrawImage();
-                    };
+                    uploadedImage.onload = () => checkAndDrawImage();
                 };
                 reader.readAsDataURL(file);
                 fileNameDisplay.textContent = file.name;
@@ -252,13 +240,11 @@
             }
         });
 
-        // 4. Download Button
         downloadBtn.addEventListener('click', () => {
-            downloadError.textContent = ''; // Clear previous errors
+            downloadError.textContent = '';
             try {
                 const link = document.createElement('a');
                 link.download = 'dpblast_profile.png';
-                // This can throw a security error if the canvas is "tainted"
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } catch (error) {
@@ -267,10 +253,8 @@
             }
         });
 
-        // 5. Copy Caption Button
         copyCaptionBtn.addEventListener('click', () => {
             captionOutput.select();
-            // Use execCommand as a fallback for iframe compatibility
             try {
                 document.execCommand('copy');
                 copyFeedback.textContent = 'Caption copied!';
@@ -283,9 +267,6 @@
 
         // --- Core Functions ---
 
-        /**
-         * Checks if both a frame and an image are selected, then calls the draw function.
-         */
         function checkAndDrawImage() {
             if (selectedFrame && userImage) {
                 isReadyToDraw = true;
@@ -296,72 +277,57 @@
             updateButtonStates();
         }
         
-        /**
-         * Draws the user's image and the frame onto the canvas.
-         */
         function draw() {
             if (!isReadyToDraw) return;
             
             canvas.classList.remove('hidden');
             canvasPlaceholder.classList.add('hidden');
-            canvasPlaceholder.textContent = ''; // Clear any error messages
+            canvasPlaceholder.textContent = '';
 
             const canvasSize = canvas.width;
-            
-            // Clear the canvas
             ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-            // --- UPDATED DRAWING LOGIC: CENTER AND CROP ---
             const imgWidth = uploadedImage.width;
             const imgHeight = uploadedImage.height;
             let sx, sy, sWidth, sHeight;
 
-            // Check if the image is wider or taller than it is square
-            if (imgWidth > imgHeight) { // Landscape
+            if (imgWidth > imgHeight) {
                 sHeight = imgHeight;
-                sWidth = imgHeight; // Use height to make a square
-                sx = (imgWidth - sWidth) / 2; // Center horizontally
+                sWidth = imgHeight;
+                sx = (imgWidth - sWidth) / 2;
                 sy = 0;
-            } else { // Portrait or square
+            } else {
                 sWidth = imgWidth;
-                sHeight = imgWidth; // Use width to make a square
-                sy = (imgHeight - sHeight) / 2; // Center vertically
+                sHeight = imgWidth;
+                sy = (imgHeight - sHeight) / 2;
                 sx = 0;
             }
 
-            // 1. Draw the cropped, centered portion of the uploaded image
             ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
-
-            // 2. Draw the transparent PNG frame on top
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
         }
 
-        /**
-         * Updates the caption in the textarea based on the name input.
-         */
         function updateCaption() {
             const name = nameInput.value.trim();
-            if (name) {
-                captionOutput.value = `I am ${name}, and I am proud to be part of this community!\n\n#DPblast #DECS`;
+            const section = sectionSelect.value;
+            
+            if (name && section) {
+                let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
+                
+                captionOutput.value = `Meet ${name}, a driven student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast this June 30, 2025 (Monday) as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
             } else {
                 captionOutput.value = '';
             }
-             updateButtonStates();
+            updateButtonStates();
         }
 
-        /**
-         * Enables or disables the download and copy buttons based on the current state.
-         */
         function updateButtonStates() {
-            // Enable download button only if image is drawn
             downloadBtn.disabled = !isReadyToDraw;
-            
-            // Enable copy button only if there is text in the caption box
             copyCaptionBtn.disabled = captionOutput.value.length === 0;
         }
 
         // --- Initial Setup ---
-        updateCaption(); // Initialize caption state
+        updateCaption();
     </script>
 </body>
 </html>
