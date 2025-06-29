@@ -55,9 +55,9 @@
 
         <!-- Logo Placeholders in a Horizontal Glass Container -->
 	<div class="glass-container flex justify-center items-center gap-6 flex-nowrap mb-8 p-4 rounded-xl max-w-2xl mx-auto">
-   		<img src="decs.png" alt="DECS Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
-    		<img src="acoes.png" alt="ACOES Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
-    		<img src="ccss.png" alt="CCSS Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
+   		<img src="decs.png" alt="DECS Logo" class="w-[120px] h-[120px] object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
+    		<img src="acoes.png" alt="ACOES Logo" class="w-[120px] h-[120px] object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
+    		<img src="ccss.png" alt="CCSS Logo" class="w-[120px] h-[120px] object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
 	</div>
 
 
@@ -78,11 +78,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- CPE Frame Button -->
                         <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
-                            <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition">
+                            <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';">
                         </button>
                         <!-- CS Frame Button -->
                         <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
-                            <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition">
+                            <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';">
                         </button>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
             downloadError.textContent = ''; // Clear previous errors
             try {
                 const link = document.createElement('a');
-                link.download = 'masterframe_profile.png';
+                link.download = 'dpblast_profile.png';
                 // This can throw a security error if the canvas is "tainted"
                 link.href = canvas.toDataURL('image/png');
                 link.click();
@@ -269,11 +269,28 @@
             // Clear the canvas
             ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-            // --- DRAWING LOGIC ---
-            // 1. Draw the user's uploaded image, scaled to fill the entire canvas
-            ctx.drawImage(uploadedImage, 0, 0, canvasSize, canvasSize);
+            // --- UPDATED DRAWING LOGIC: CENTER AND CROP ---
+            const imgWidth = uploadedImage.width;
+            const imgHeight = uploadedImage.height;
+            let sx, sy, sWidth, sHeight;
 
-            // 2. Draw the transparent PNG frame on top of the user's image
+            // Check if the image is wider or taller than it is square
+            if (imgWidth > imgHeight) { // Landscape
+                sHeight = imgHeight;
+                sWidth = imgHeight; // Use height to make a square
+                sx = (imgWidth - sWidth) / 2; // Center horizontally
+                sy = 0;
+            } else { // Portrait or square
+                sWidth = imgWidth;
+                sHeight = imgWidth; // Use width to make a square
+                sy = (imgHeight - sHeight) / 2; // Center vertically
+                sx = 0;
+            }
+
+            // 1. Draw the cropped, centered portion of the uploaded image
+            ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
+
+            // 2. Draw the transparent PNG frame on top
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
         }
 
@@ -283,7 +300,7 @@
         function updateCaption() {
             const name = nameInput.value.trim();
             if (name) {
-                captionOutput.value = `I am ${name}, and I am proud to be part of this community!\n\n#MasterFRAME #DECS`;
+                captionOutput.value = `I am ${name}, and I am proud to be part of this community!\n\n#DPblast #DECS`;
             } else {
                 captionOutput.value = '';
             }
