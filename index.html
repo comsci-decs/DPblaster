@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FRAMEit by DECS</title>
+    <title>DPblaster!</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -49,16 +49,18 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <header class="text-center mb-6">
-            <h1 class="text-4xl md:text-5xl font-bold text-white">MasterFRAME</h1>
-            <p class="text-lg text-gray-300">by DECS-CCSS-ACOES</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-white">DPblast!</h1>
+            <p class="text-lg text-gray-300">by DECS</p>
         </header>
 
-        <!-- Logo Placeholders in a Glass Container -->
-        <div class="glass-container flex justify-center items-center gap-4 md:gap-8 mb-8 p-4 rounded-xl max-w-sm mx-auto">
-            <img src="decs.png" alt="DECS Logo" class="rounded-full">
-            <img src="acoes.png" alt="ACOES Logo" class="rounded-full">
-            <img src="ccss.png" alt="CCSS Logo" class="rounded-full">
-        </div>
+        <!-- Logo Placeholders in a Horizontal Glass Container -->
+	<div class="glass-container flex justify-center items-center gap-6 flex-nowrap mb-8 p-4 rounded-xl max-w-2xl mx-auto">
+   		<img src="decs.png" alt="DECS Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
+    		<img src="acoes.png" alt="ACOES Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
+    		<img src="ccss.png" alt="CCSS Logo" class="w-[120px] h-[120px] object-cover rounded-xl">
+	</div>
+
+
 
         <!-- Main Content Box -->
         <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
@@ -131,7 +133,7 @@
              <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
              <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
         </div>
-        <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
+        <p class="text-sm text-gray-300 font-semibold">2025 DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
         <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
         <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
     </footer>
@@ -231,4 +233,76 @@
                 document.execCommand('copy');
                 copyFeedback.textContent = 'Caption copied!';
                 setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-            } catch (er
+            } catch (err) {
+                copyFeedback.textContent = 'Failed to copy!';
+                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+            }
+        });
+
+        // --- Core Functions ---
+
+        /**
+         * Checks if both a frame and an image are selected, then calls the draw function.
+         */
+        function checkAndDrawImage() {
+            if (selectedFrame && userImage) {
+                isReadyToDraw = true;
+                draw();
+            } else {
+                isReadyToDraw = false;
+            }
+            updateButtonStates();
+        }
+        
+        /**
+         * Draws the user's image and the frame onto the canvas.
+         */
+        function draw() {
+            if (!isReadyToDraw) return;
+            
+            canvas.classList.remove('hidden');
+            canvasPlaceholder.classList.add('hidden');
+            canvasPlaceholder.textContent = ''; // Clear any error messages
+
+            const canvasSize = canvas.width;
+            
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+            // --- DRAWING LOGIC ---
+            // 1. Draw the user's uploaded image, scaled to fill the entire canvas
+            ctx.drawImage(uploadedImage, 0, 0, canvasSize, canvasSize);
+
+            // 2. Draw the transparent PNG frame on top of the user's image
+            ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
+        }
+
+        /**
+         * Updates the caption in the textarea based on the name input.
+         */
+        function updateCaption() {
+            const name = nameInput.value.trim();
+            if (name) {
+                captionOutput.value = `I am ${name}, and I am proud to be part of this community!\n\n#MasterFRAME #DECS`;
+            } else {
+                captionOutput.value = '';
+            }
+             updateButtonStates();
+        }
+
+        /**
+         * Enables or disables the download and copy buttons based on the current state.
+         */
+        function updateButtonStates() {
+            // Enable download button only if image is drawn
+            downloadBtn.disabled = !isReadyToDraw;
+            
+            // Enable copy button only if there is text in the caption box
+            copyCaptionBtn.disabled = captionOutput.value.length === 0;
+        }
+
+        // --- Initial Setup ---
+        updateCaption(); // Initialize caption state
+    </script>
+</body>
+</html>
