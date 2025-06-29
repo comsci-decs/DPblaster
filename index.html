@@ -38,7 +38,7 @@
             margin-bottom: 2.5rem;
         }
 
-        /* NEW Main Page Loader */
+        /* Main Page Loader */
         #loading-screen .loader {
           width: 40px;
           height: 30px;
@@ -71,17 +71,17 @@
           100% {top:-0.1px}
         }
         
-        /* NEW Preview Area Loader */
-        #preview-loader {
+        /* NEW Preview Loader CSS */
+        .preview-loader {
             width: 40px;
             height: 40px;
             position: relative;
-            --c:no-repeat linear-gradient(#F97316 0 0); /* Orange color */
+            --c:no-repeat linear-gradient(#F97316 0 0); /* Using theme orange color */
             background:
                 var(--c) center/100% 10px,
                 var(--c) center/10px 100%;
         }
-        #preview-loader:before {
+        .preview-loader:before {
             content:'';
             position: absolute;
             inset: 0;
@@ -99,27 +99,6 @@
             100% {inset:0   ;transform: rotate(90deg)}
         }
         
-        /* NEW Shutter Animation */
-        .preview-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .shutter {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background: #111;
-            z-index: 10;
-            transform-origin: top;
-            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
-        }
-        #shutter-top { top: 0; transform: scaleY(1); }
-        #shutter-bottom { bottom: 0; transform-origin: bottom; transform: scaleY(1); }
-        .shutter.open {
-            transform: scaleY(0);
-        }
-
         /* Hide main content initially */
         #main-content {
             display: none;
@@ -239,9 +218,8 @@
                     <div>
                         <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
                         <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
-                           <div id="shutter-top" class="shutter"></div>
-                           <div id="shutter-bottom" class="shutter"></div>
-                           <div id="preview-loader" style="display: none;"></div>
+                           <!-- Preview loader div added -->
+                           <div id="preview-loader" class="preview-loader" style="display: none;"></div>
                            <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
                            <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
                         </div>
@@ -339,9 +317,7 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
-        const previewLoader = document.getElementById('preview-loader');
-        const shutterTop = document.getElementById('shutter-top');
-        const shutterBottom = document.getElementById('shutter-bottom');
+        const previewLoader = document.getElementById('preview-loader'); // Added reference
         const downloadBtn = document.getElementById('download-btn');
         const downloadError = document.getElementById('download-error');
         const captionOutput = document.getElementById('caption-output');
@@ -369,8 +345,10 @@
                 frameImage.src = selectedFrame;
                 frameImage.onload = () => checkAndDrawImage();
                 frameImage.onerror = () => {
-                    previewContainer.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
-                    previewContainer.classList.add('text-red-400');
+                    canvasPlaceholder.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
+                    canvasPlaceholder.classList.add('text-red-400');
+                    canvasPlaceholder.classList.remove('hidden');
+                    canvas.classList.add('hidden');
                 }
             });
         });
@@ -430,29 +408,19 @@
             previewLoader.style.display = 'none';
         }
 
-        function triggerShutterAnimation() {
-            // Reset state
-            shutterTop.classList.remove('open');
-            shutterBottom.classList.remove('open');
-
-            // Open shutter
-            setTimeout(() => {
-                canvas.classList.remove('hidden');
-                shutterTop.classList.add('open');
-                shutterBottom.classList.add('open');
-            }, 100); // slight delay to ensure canvas is ready
-        }
-
         function checkAndDrawImage() {
             if (selectedFrame && userImage) {
                 isReadyToDraw = true;
-                showPreviewLoader();
-                // Simulate processing time before drawing
-                setTimeout(() => {
+                showPreviewLoader(); // Show the loader
+                setTimeout(() => { // Wait 3 seconds
                     draw();
-                }, 500);
+                }, 3000);
             } else {
                 isReadyToDraw = false;
+                // If inputs are cleared, show placeholder again
+                hidePreviewLoader();
+                canvas.classList.add('hidden');
+                canvasPlaceholder.classList.remove('hidden');
             }
             updateButtonStates();
         }
@@ -460,6 +428,10 @@
         function draw() {
             if (!isReadyToDraw) return;
             
+            hidePreviewLoader();
+            canvasPlaceholder.classList.add('hidden');
+            canvas.classList.remove('hidden');
+
             const canvasSize = canvas.width;
             ctx.clearRect(0, 0, canvasSize, canvasSize);
 
@@ -481,9 +453,7 @@
 
             ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
-
-            hidePreviewLoader();
-            triggerShutterAnimation();
+            
             updateButtonStates();
         }
 
@@ -502,6 +472,7 @@
         }
 
         function updateButtonStates() {
+            // Logic for enabling/disabling is now tied to isReadyToDraw, which is set before the timeout
             downloadBtn.disabled = !isReadyToDraw;
             copyCaptionBtn.disabled = captionOutput.value.length === 0;
         }
