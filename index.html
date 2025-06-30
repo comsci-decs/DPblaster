@@ -71,7 +71,7 @@
           100% {top:-0.1px}
         }
         
-        /* NEW Preview Loader CSS */
+        /* Preview Loader CSS */
         .preview-loader {
             width: 40px;
             height: 40px;
@@ -184,14 +184,14 @@
                         <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
                         <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             <option value="" disabled selected>Choose your section...</option>
-                            <option value="I-CpE1">I-CpE1</option>
-                            <option value="II-CpE1">II-CpE1</option>
-                            <option value="III-CpE1">III-CpE1</option>
-                            <option value="IV-CpE1">IV-CpE1</option>
-                            <option value="I-CS1">I-CS1</option>
-                            <option value="II-CS1">II-CS1</option>
-                            <option value="III-CS1">III-CS1</option>
-                            <option value="IV-CS1">IV-CS1</option>
+                            <option value="1-CpE1">1-CpE1</option>
+                            <option value="1-CpE2">1-CpE2</option>
+                            <option value="1-CpE3">1-CpE3</option>
+                            <option value="1-CpE4">1-CpE4</option>
+                            <option value="1-CS1">1-CS1</option>
+                            <option value="1-CS2">1-CS2</option>
+                            <option value="1-CS3">1-CS3</option>
+                            <option value="1-CS4">1-CS4</option>
                         </select>
                     </div>
 
@@ -218,10 +218,33 @@
                     <div>
                         <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
                         <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
-                           <!-- Preview loader div added -->
                            <div id="preview-loader" class="preview-loader" style="display: none;"></div>
                            <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
                            <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Adjustment Controls -->
+                    <div id="adjustment-controls" class="hidden">
+                        <h3 class="text-sm font-medium text-gray-300 mb-2 text-center">6. Adjust Picture</h3>
+                        <div class="flex items-center justify-center gap-4">
+                            <!-- Zoom Controls -->
+                            <div class="flex flex-col gap-2">
+                                <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">+</button>
+                                <button id="zoom-out-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">-</button>
+                            </div>
+                            <!-- D-Pad Controls -->
+                            <div class="grid grid-cols-3 gap-1 w-24">
+                                <div></div>
+                                <button id="up-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↑</button>
+                                <div></div>
+                                <button id="left-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">←</button>
+                                <button id="reset-btn" class="control-btn bg-red-600/80 p-2 rounded-full text-xs">R</button>
+                                <button id="right-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">→</button>
+                                <div></div>
+                                <button id="down-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↓</button>
+                                <div></div>
+                            </div>
                         </div>
                     </div>
 
@@ -317,17 +340,32 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
-        const previewLoader = document.getElementById('preview-loader'); // Added reference
+        const previewLoader = document.getElementById('preview-loader');
         const downloadBtn = document.getElementById('download-btn');
         const downloadError = document.getElementById('download-error');
         const captionOutput = document.getElementById('caption-output');
         const copyCaptionBtn = document.getElementById('copy-caption-btn');
         const copyFeedback = document.getElementById('copy-feedback');
+        // New Adjustment Control References
+        const adjustmentControls = document.getElementById('adjustment-controls');
+        const upBtn = document.getElementById('up-btn');
+        const downBtn = document.getElementById('down-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const resetBtn = document.getElementById('reset-btn');
 
         // --- State Variables ---
         let selectedFrame = null;
         let userImage = null;
         let isReadyToDraw = false;
+        // New State for Adjustments
+        let scale = 1.0;
+        let offsetX = 0;
+        let offsetY = 0;
+        const panStep = 10;
+        const scaleStep = 0.1;
 
         // --- Image Objects ---
         const frameImage = new Image();
@@ -360,7 +398,13 @@
                 reader.onload = (e) => {
                     userImage = e.target.result;
                     uploadedImage.src = userImage;
-                    uploadedImage.onload = () => checkAndDrawImage();
+                    uploadedImage.onload = () => {
+                        // Reset adjustments for new image
+                        scale = 1.0;
+                        offsetX = 0;
+                        offsetY = 0;
+                        checkAndDrawImage();
+                    }
                 };
                 reader.readAsDataURL(file);
                 fileNameDisplay.textContent = file.name;
@@ -369,6 +413,20 @@
                 fileNameDisplay.textContent = 'No file chosen';
                 checkAndDrawImage();
             }
+        });
+
+        // --- Adjustment Control Event Listeners ---
+        upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
+        downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
+        leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
+        rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
+        zoomInBtn.addEventListener('click', () => { scale -= scaleStep; if(scale < 0.1) scale = 0.1; draw(); });
+        zoomOutBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
+        resetBtn.addEventListener('click', () => {
+            scale = 1.0;
+            offsetX = 0;
+            offsetY = 0;
+            draw();
         });
 
         downloadBtn.addEventListener('click', () => {
@@ -402,6 +460,7 @@
             canvas.classList.add('hidden');
             canvasPlaceholder.classList.add('hidden');
             previewLoader.style.display = 'block';
+            adjustmentControls.classList.add('hidden');
         }
 
         function hidePreviewLoader() {
@@ -411,16 +470,16 @@
         function checkAndDrawImage() {
             if (selectedFrame && userImage) {
                 isReadyToDraw = true;
-                showPreviewLoader(); // Show the loader
-                setTimeout(() => { // Wait 3 seconds
+                showPreviewLoader();
+                setTimeout(() => {
                     draw();
                 }, 3000);
             } else {
                 isReadyToDraw = false;
-                // If inputs are cleared, show placeholder again
                 hidePreviewLoader();
                 canvas.classList.add('hidden');
                 canvasPlaceholder.classList.remove('hidden');
+                adjustmentControls.classList.add('hidden');
             }
             updateButtonStates();
         }
@@ -431,6 +490,7 @@
             hidePreviewLoader();
             canvasPlaceholder.classList.add('hidden');
             canvas.classList.remove('hidden');
+            adjustmentControls.classList.remove('hidden');
 
             const canvasSize = canvas.width;
             ctx.clearRect(0, 0, canvasSize, canvasSize);
@@ -439,17 +499,27 @@
             const imgHeight = uploadedImage.height;
             let sx, sy, sWidth, sHeight;
 
-            if (imgWidth > imgHeight) {
+            const imgAspectRatio = imgWidth / imgHeight;
+            
+            if (imgAspectRatio > 1) { // Landscape
                 sHeight = imgHeight;
                 sWidth = imgHeight;
-                sx = (imgWidth - sWidth) / 2;
-                sy = 0;
-            } else {
+            } else { // Portrait or square
                 sWidth = imgWidth;
                 sHeight = imgWidth;
-                sy = (imgHeight - sHeight) / 2;
-                sx = 0;
             }
+
+            // Apply zoom
+            sWidth *= scale;
+            sHeight *= scale;
+            
+            // Center the crop
+            sx = (imgWidth - sWidth) / 2;
+            sy = (imgHeight - sHeight) / 2;
+
+            // Apply pan/offset
+            sx += offsetX;
+            sy += offsetY;
 
             ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
@@ -464,7 +534,7 @@
             if (name && section) {
                 let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
                 
-                captionOutput.value = `Meet ${name}, a driven student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast, as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞 #𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬\nMake yours now at:\ncomsci-decs.github.io/DPblaster/`;
+                captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast this June 30, 2025 (Monday) as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
             } else {
                 captionOutput.value = '';
             }
@@ -472,7 +542,6 @@
         }
 
         function updateButtonStates() {
-            // Logic for enabling/disabling is now tied to isReadyToDraw, which is set before the timeout
             downloadBtn.disabled = !isReadyToDraw;
             copyCaptionBtn.disabled = captionOutput.value.length === 0;
         }
