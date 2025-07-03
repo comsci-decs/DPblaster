@@ -430,39 +430,55 @@
     });
 
     downloadBtn.addEventListener('click', () => {
-        downloadError.textContent = '';
-        try {
-            // Use toBlob for better mobile support
-            canvas.toBlob(function(blob) {
-                const link = document.createElement('a');
-                link.download = 'dpblast_profile.png';
-                
-                // Create a URL for the blob
-                link.href = URL.createObjectURL(blob);
-                
-                // Programmatically click the link to trigger the download
-                link.click();
-                
-                // Revoke the object URL to free up memory
-                URL.revokeObjectURL(link.href);
-            }, 'image/png');
-        } catch (error) {
-            console.error("Download failed:", error);
-            downloadError.textContent = "Download failed. Please try a different browser or image.";
-        }
-    });
+    downloadError.textContent = '';
+    try {
+        canvas.toBlob(function(blob) {
+            if (!blob) {
+                downloadError.textContent = "Failed to create image. Please try again.";
+                return;
+            }
+            const url = URL.createObjectURL(blob);
 
-    copyCaptionBtn.addEventListener('click', () => {
-        captionOutput.select();
+            // Create a temporary link to trigger the download
+            const link = document.createElement('a');
+            link.download = 'dpblast_profile.png';
+            link.href = url;
+
+            // For most browsers, this will trigger a download
+            link.click();
+
+            // A fallback for browsers that block the programmatic click
+            // or don't support the 'download' attribute.
+            // This will open the image in a new tab.
+            setTimeout(() => {
+                // Clean up the object URL to free memory
+                URL.revokeObjectURL(url);
+                
+                // If the download didn't start, open in a new tab
+                // This is a simplified check. A more robust solution might
+                // involve checking if the window is still focused.
+                const newTab = window.open(url, '_blank');
+                if(!newTab){
+                    downloadError.textContent = "Please disable your pop-up blocker to view the image.";
+                }
+            }, 100);
+
+        }, 'image/png');
+    } catch (error) {
+        console.error("Download failed:", error);
+        downloadError.textContent = "An error occurred. Please try a different browser or image.";
+        // Final fallback: try to open the data URL directly
         try {
-            document.execCommand('copy');
-            copyFeedback.textContent = 'Caption copied!';
-            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-        } catch (err) {
-            copyFeedback.textContent = 'Failed to copy!';
-            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+            const dataUrl = canvas.toDataURL('image/png');
+            const newTab = window.open(dataUrl, '_blank');
+            if(!newTab){
+                 downloadError.textContent = "Please disable your pop-up blocker to view the image.";
+            }
+        } catch (e) {
+            console.error("Fallback to data URL failed:", e);
         }
-    });
+    }
+});
 
     // --- Core Functions ---
 
