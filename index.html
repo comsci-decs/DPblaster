@@ -300,11 +300,14 @@
 
         function attemptToDraw() {
             if (selectedFrameSrc && userImageSrc) {
+                // Show loader immediately when an attempt is made
+                previewLoader.style.display = 'block';
+                canvas.classList.add('hidden');
+                canvasPlaceholder.classList.add('hidden');
+
+                // Check if images are already loaded in cache
                 if (frameImage.complete && uploadedImage.complete) {
                     drawCanvas();
-                } else {
-                    previewLoader.style.display = 'block';
-                    canvas.classList.add('hidden');
                 }
             }
         }
@@ -328,38 +331,13 @@
         function downloadImage() {
             if (downloadBtn.disabled) return;
             downloadError.textContent = '';
-            
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            // For PC, use direct download
-            if (!isMobile) {
+            try {
                 const link = document.createElement('a');
                 link.download = 'dpblast_profile.png';
-                link.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                link.href = canvas.toDataURL("image/png");
                 link.click();
-                return;
-            }
-
-            // For Mobile, attempt direct download via blob, which is more robust
-            try {
-                canvas.toBlob(function(blob) {
-                    if (!blob) {
-                        downloadError.textContent = "Failed to create image.";
-                        return;
-                    }
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'dpblast_profile.png';
-                    
-                    document.body.appendChild(link); // Required for Firefox
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }, 'image/png');
             } catch (error) {
-                downloadError.textContent = "Download failed. Please try a different browser.";
+                 downloadError.textContent = "Download failed. Please try again.";
             }
         }
         
@@ -372,7 +350,7 @@
                 frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
                 button.firstElementChild.classList.add('frame-selected');
                 selectedFrameSrc = button.dataset.frameSrc;
-                frameImage.src = selectedFrameSrc;
+                frameImage.src = selectedFrameSrc; // This will trigger onload if not cached
                 attemptToDraw();
             });
         });
@@ -384,7 +362,7 @@
                 reader.onload = (e) => {
                     scale = 1.0; offsetX = 0; offsetY = 0; // Reset adjustments
                     userImageSrc = e.target.result;
-                    uploadedImage.src = userImageSrc;
+                    uploadedImage.src = userImageSrc; // This will trigger onload
                     attemptToDraw();
                 };
                 reader.readAsDataURL(file);
