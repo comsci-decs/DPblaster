@@ -9,151 +9,77 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* General Body Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #9a0200;
             background-image: linear-gradient(to bottom right, #9a0200, #5c0100);
         }
         
-        /* Loading Screen Styles */
         #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #9a0200;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #9a0200; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
             transition: opacity 0.5s ease-out;
         }
+        #loading-logo { max-width: 80%; width: 400px; margin-bottom: 2.5rem; }
 
-        #loading-logo {
-            max-width: 80%;
-            width: 400px;
-            margin-bottom: 2.5rem;
-        }
-
-        /* Main Page Loader */
         #loading-screen .loader {
-          width: 40px;
-          height: 30px;
-          --c:no-repeat linear-gradient(#ffffff 0 0);
-          background:
-            var(--c) 0    100%/8px 30px,
-            var(--c) 50%  100%/8px 20px,
-            var(--c) 100% 100%/8px 10px;
-          position: relative;
-          clip-path: inset(-100% 0);
+          width: 40px; height: 30px; --c:no-repeat linear-gradient(#ffffff 0 0);
+          background: var(--c) 0 100%/8px 30px, var(--c) 50% 100%/8px 20px, var(--c) 100% 100%/8px 10px;
+          position: relative; clip-path: inset(-100% 0);
         }
         #loading-screen .loader:before{
-          content: "";
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #fff;
-          left: -16px;
-          top: 0;
-          animation:
-            l5-1 2s   linear infinite,
-            l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+          content: ""; position: absolute; width: 8px; height: 8px; border-radius: 50%;
+          background: #fff; left: -16px; top: 0;
+          animation: l5-1 2s linear infinite, l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
         }
-        @keyframes l5-1 {
-          0%   {left:-16px;transform:translateY(-8px)}
-          100% {left:calc(100% + 8px);transform:translateY(22px)}
-        }
-        @keyframes l5-2 {
-          100% {top:-0.1px}
-        }
+        @keyframes l5-1 { 0% {left:-16px;transform:translateY(-8px)} 100% {left:calc(100% + 8px);transform:translateY(22px)} }
+        @keyframes l5-2 { 100% {top:-0.1px} }
         
-        /* Preview Loader CSS */
         .preview-loader {
-            width: 40px;
-            height: 40px;
-            position: relative;
-            --c:no-repeat linear-gradient(#F97316 0 0); /* Using theme orange color */
-            background:
-                var(--c) center/100% 10px,
-                var(--c) center/10px 100%;
+            width: 40px; height: 40px; position: relative;
+            --c:no-repeat linear-gradient(#F97316 0 0);
+            background: var(--c) center/100% 10px, var(--c) center/10px 100%;
         }
         .preview-loader:before {
-            content:'';
-            position: absolute;
-            inset: 0;
-            background:
-                var(--c) 0    0,
-                var(--c) 100% 0,
-                var(--c) 0    100%,
-                var(--c) 100% 100%;
+            content:''; position: absolute; inset: 0;
+            background: var(--c) 0 0, var(--c) 100% 0, var(--c) 0 100%, var(--c) 100% 100%;
             background-size: 15.5px 15.5px;
             animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
         }
-        @keyframes l16 {
-            33%  {inset:-10px;transform: rotate(0deg)}
-            66%  {inset:-10px;transform: rotate(90deg)}
-            100% {inset:0   ;transform: rotate(90deg)}
-        }
+        @keyframes l16 { 33% {inset:-10px;transform:rotate(0deg)} 66% {inset:-10px;transform:rotate(90deg)} 100% {inset:0;transform:rotate(90deg)} }
         
-        /* Hide main content initially */
-        #main-content {
-            display: none;
-        }
+        #main-content, #browser-blocker { display: none; }
+        canvas { max-width: 100%; height: auto; border-radius: 0.5rem; cursor: pointer; }
+        .custom-transition { transition: all 0.3s ease-in-out; }
+        .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #F97316; }
+        input[type="file"] { display: none; }
+        .glass-container { background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
 
-        /* Canvas Styles */
-        canvas {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-        }
-        .custom-transition {
-            transition: all 0.3s ease-in-out;
-        }
-        .frame-selected {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 4px #F97316; /* orange-500 */
-        }
-        input[type="file"] {
-            display: none;
-        }
-        .glass-container {
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Sticky Header Styles */
-        #app-header {
-            transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out;
-        }
-        #app-header.scrolled {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            background: rgba(0, 0, 0, 0.4);
-        }
-        #app-logo {
-            transition: max-height 0.3s ease-in-out;
-            max-height: 50px;
-            width: auto;
-        }
-        #app-header.scrolled #app-logo {
-            max-height: 30px;
-        }
+        #app-header { transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out; }
+        #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 0, 0, 0.4); }
+        #app-logo { transition: max-height 0.3s ease-in-out; max-height: 50px; width: auto; }
+        #app-header.scrolled #app-logo { max-height: 30px; }
     </style>
 </head>
 <body class="text-gray-200">
 
-    <!-- Loading Screen -->
     <div id="loading-screen">
         <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
         <div class="loader"></div>
     </div>
     
-    <!-- Main Website Content -->
+    <div id="browser-blocker" class="fixed inset-0 z-[200] flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass-container max-w-sm w-full p-6 rounded-2xl text-center shadow-xl">
+            <h2 class="text-2xl font-bold text-white mb-3">Unsupported Browser</h2>
+            <p class="text-gray-300 mb-6">This page may not work correctly in the Facebook or Messenger browser. For the best experience, please open it in a standard browser like Chrome, Safari, or Opera.</p>
+            <p class="text-gray-400 text-sm mb-2">1. Tap the three dots (&#8942;) in the corner.</p>
+            <p class="text-gray-400 text-sm mb-6">2. Select "Open in Browser".</p>
+            <button id="copy-link-btn" class="w-full bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition">Copy Page Link</button>
+            <div id="copy-link-feedback" class="text-sm text-green-400 mt-2 h-5"></div>
+        </div>
+    </div>
+
     <div id="main-content">
         <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
             <div class="container mx-auto flex justify-center items-center">
@@ -174,47 +100,30 @@
 
             <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
                 <div class="space-y-6">
-                    
                     <div>
                         <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
                         <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
                     </div>
-
                     <div>
                         <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
                         <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             <option value="" disabled selected>Choose your course & section...</option>
-                            <option value="I-CpE1">I-CpE1</option>
-                            <option value="II-CpE1">II-CpE1</option>
-                            <option value="III-CpE1">III-CpE1</option>
-                            <option value="IV-CpE1">IV-CpE1</option>
-                            <option value="I-CS1">I-CS1</option>
-                            <option value="II-CS1">II-CS1</option>
-                            <option value="III-CS1">III-CS1</option>
-                            <option value="IV-CS">IV-CS1</option>
+                            <option value="I-CpE1">I-CpE1</option> <option value="II-CpE1">II-CpE1</option> <option value="III-CpE1">III-CpE1</option> <option value="IV-CpE1">IV-CpE1</option>
+                            <option value="I-CS1">I-CS1</option> <option value="II-CS1">II-CS1</option> <option value="III-CS1">III-CS1</option> <option value="IV-CS1">IV-CS1</option>
                         </select>
                     </div>
-
                     <div>
                         <h3 class="text-sm font-medium text-gray-300 mb-2">3. Choose Your Frame</h3>
                         <div class="grid grid-cols-2 gap-4">
-                            <button id="cpe-frame-btn" class="frame-btn" data-frame-src="cpe_frame.png">
-                                <img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';">
-                            </button>
-                            <button id="cs-frame-btn" class="frame-btn" data-frame-src="cs_frame.png">
-                                <img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';">
-                            </button>
+                            <button class="frame-btn" data-frame-src="cpe_frame.png"><img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';"></button>
+                            <button class="frame-btn" data-frame-src="cs_frame.png"><img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';"></button>
                         </div>
                     </div>
-
                     <div>
-                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">
-                            4. Upload Your Picture
-                        </label>
+                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">4. Upload Your Picture</label>
                         <input type="file" id="image-upload-btn" accept="image/*">
                         <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
                     </div>
-
                     <div>
                         <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
                         <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
@@ -223,47 +132,35 @@
                            <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
                         </div>
                     </div>
-
-                    <!-- NEW: Adjustment Controls -->
                     <div id="adjustment-controls" class="hidden">
                         <h3 class="text-sm font-medium text-gray-300 mb-2 text-center">6. Adjust Picture</h3>
                         <div class="flex items-center justify-center gap-4">
-                            <!-- Zoom Controls -->
                             <div class="flex flex-col gap-2">
                                 <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">+</button>
                                 <button id="zoom-out-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">-</button>
                             </div>
-                            <!-- D-Pad Controls -->
                             <div class="grid grid-cols-3 gap-1 w-24">
-                                <div></div>
-                                <button id="up-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↑</button>
-                                <div></div>
+                                <div></div><button id="up-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↑</button><div></div>
                                 <button id="left-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">←</button>
                                 <button id="reset-btn" class="control-btn bg-red-600/80 p-2 rounded-full text-xs">R</button>
                                 <button id="right-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">→</button>
-                                <div></div>
-                                <button id="down-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↓</button>
-                                <div></div>
+                                <div></div><button id="down-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↓</button><div></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="space-y-4">
-                        <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
-                            Download Photo
-                        </button>
-                        <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
-                     
+                        <div>
+                            <p class="text-xs text-gray-400 text-center mb-2">Tip: Long-press the image above or use the button below to save!</p>
+                            <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Download Photo</button>
+                            <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
+                        </div>
                         <div>
                             <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
                             <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
-                            <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>
-                                Copy Caption
-                            </button>
+                            <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Copy Caption</button>
                             <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
                         </div>
                     </div>
-
                 </div>
             </main>
         </div>
@@ -271,20 +168,13 @@
         <footer class="text-center py-10 px-4 mt-8 bg-black/30">
             <p class="text-gray-300 font-semibold mb-4">Follow Us on Facebook!</p>
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                 <a href="https://www.facebook.com/acoeslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow ACOES</a>
-                 <a href="https://www.facebook.com/ccsslcba" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">Follow CCSS</a>
+                 <a href="https://www.facebook.com/acoeslcba" target="_blank" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition">Follow ACOES</a>
+                 <a href="https://www.facebook.com/ccsslcba" target="_blank" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition">Follow CCSS</a>
             </div>
             <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
-            <p class="text-xs text-gray-400 mt-1">Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
-            <p class="text-xs text-gray-400 mt-4">Developed using HTML-CSS-JS</p>
-            <p class="text-xs text-gray-400 mt-4">Designed and Produced by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS). </p>
-            <p class="text-sm text-white mt-2 font-semibold">Proud to be DECS.</p>
-            
-            <div class="mt-6 text-center">
-                <p class="text-xs text-gray-400">You are visitor number:</p>
-                <p id="visitor-count" class="text-lg font-bold text-white">0</p>
-            </div>
-            
+            <p class="text-xs text-gray-400 mt-1">&copy; Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
+            <p class="text-xs text-gray-400 mt-4">Developed by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS).</p>
+            <div class="mt-6 text-center"><p class="text-xs text-gray-400">You are visitor number:</p><p id="visitor-count" class="text-lg font-bold text-white">0</p></div>
             <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
         </footer>
 
@@ -293,287 +183,254 @@
         </div>
     </div>
 
-   <script>
-    // --- Loading Screen Logic ---
-    window.addEventListener('load', () => {
-        const loadingScreen = document.getElementById('loading-screen');
-        const mainContent = document.getElementById('main-content');
-        
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
+    <script>
+        // --- Browser and System Checks ---
+        (function() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            // Detect Facebook/Messenger in-app browsers
+            if (/FBAN|FBAV|Messenger/i.test(userAgent)) {
+                document.getElementById('browser-blocker').style.display = 'flex';
+                document.getElementById('loading-screen').style.display = 'none'; // Hide loading screen
+                
+                const copyBtn = document.getElementById('copy-link-btn');
+                const feedbackDiv = document.getElementById('copy-link-feedback');
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        feedbackDiv.textContent = 'Link copied!';
+                        setTimeout(() => { feedbackDiv.textContent = ''; }, 2000);
+                    }, () => {
+                        feedbackDiv.textContent = 'Failed to copy link.';
+                    });
+                });
+                return; // Stop further script execution
+            }
+
+            // If browser is fine, proceed with loading the page
+            document.getElementById('main-content').style.display = 'block';
+        })();
+
+
+        // --- Loading Screen Logic ---
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
             setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                mainContent.style.display = 'block';
-            }, 500);
-        }, 3000); 
-    });
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 2000); // Shortened load time
+        });
 
-    // --- Sticky Header Scroll Logic ---
-    const header = document.getElementById('app-header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        // --- Sticky Header Scroll Logic ---
+        const header = document.getElementById('app-header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+        
+        // --- Visitor Count Logic ---
+        let count = localStorage.getItem('visitorCount');
+        count = count ? parseInt(count) + 1 : 1;
+        localStorage.setItem('visitorCount', count);
+        document.getElementById('visitor-count').textContent = count;
+
+        // --- DOM Element References ---
+        const nameInput = document.getElementById('name-input');
+        const sectionSelect = document.getElementById('section-select');
+        const frameButtons = document.querySelectorAll('.frame-btn');
+        const imageUploadBtn = document.getElementById('image-upload-btn');
+        const fileNameDisplay = document.getElementById('file-name');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const previewLoader = document.getElementById('preview-loader');
+        const downloadBtn = document.getElementById('download-btn');
+        const downloadError = document.getElementById('download-error');
+        const captionOutput = document.getElementById('caption-output');
+        const copyCaptionBtn = document.getElementById('copy-caption-btn');
+        const adjustmentControls = document.getElementById('adjustment-controls');
+        // ... other element references
+        const upBtn = document.getElementById('up-btn');
+        const downBtn = document.getElementById('down-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // --- State Variables ---
+        let selectedFrame = null, userImage = null, isReadyToDraw = false;
+        let scale = 1.0, offsetX = 0, offsetY = 0;
+        const panStep = 10, scaleStep = 0.1;
+        let pressTimer = null;
+
+        // --- Image Objects ---
+        const frameImage = new Image();
+        const uploadedImage = new Image();
+        
+        // --- Core Functions ---
+        function updateButtonStates() {
+            const ready = isReadyToDraw;
+            downloadBtn.disabled = !ready;
+            copyCaptionBtn.disabled = captionOutput.value.length === 0;
         }
-    });
-    
-    // --- Visitor Count Logic ---
-    let count = localStorage.getItem('visitorCount');
-    if (count === null) {
-        count = 1;
-    } else {
-        count = parseInt(count) + 1;
-    }
-    localStorage.setItem('visitorCount', count);
-    const visitorCountElement = document.getElementById('visitor-count');
-    if(visitorCountElement) {
-        visitorCountElement.textContent = count;
-    }
 
-    // --- DOM Element References ---
-    const nameInput = document.getElementById('name-input');
-    const sectionSelect = document.getElementById('section-select');
-    const frameButtons = document.querySelectorAll('.frame-btn');
-    const imageUploadBtn = document.getElementById('image-upload-btn');
-    const fileNameDisplay = document.getElementById('file-name');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const canvasPlaceholder = document.getElementById('canvas-placeholder');
-    const previewLoader = document.getElementById('preview-loader');
-    const downloadBtn = document.getElementById('download-btn');
-    const downloadError = document.getElementById('download-error');
-    const captionOutput = document.getElementById('caption-output');
-    const copyCaptionBtn = document.getElementById('copy-caption-btn');
-    const copyFeedback = document.getElementById('copy-feedback');
-    // New Adjustment Control References
-    const adjustmentControls = document.getElementById('adjustment-controls');
-    const upBtn = document.getElementById('up-btn');
-    const downBtn = document.getElementById('down-btn');
-    const leftBtn = document.getElementById('left-btn');
-    const rightBtn = document.getElementById('right-btn');
-    const zoomInBtn = document.getElementById('zoom-in-btn');
-    const zoomOutBtn = document.getElementById('zoom-out-btn');
-    const resetBtn = document.getElementById('reset-btn');
+        function updateCaption() {
+            const name = nameInput.value.trim();
+            const section = sectionSelect.value;
+            if (name && section) {
+                const course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
+                captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
+            } else {
+                captionOutput.value = '';
+            }
+            updateButtonStates();
+        }
 
-    // --- State Variables ---
-    let selectedFrame = null;
-    let userImage = null;
-    let isReadyToDraw = false;
-    // New State for Adjustments
-    let scale = 1.0;
-    let offsetX = 0;
-    let offsetY = 0;
-    const panStep = 10;
-    const scaleStep = 0.1;
+        function draw() {
+            if (!isReadyToDraw) return;
+            previewLoader.style.display = 'none';
+            canvasPlaceholder.classList.add('hidden');
+            canvas.classList.remove('hidden');
+            adjustmentControls.classList.remove('hidden');
 
-    // --- Image Objects ---
-    const frameImage = new Image();
-    const uploadedImage = new Image();
-    
-    // --- Event Listeners ---
-    nameInput.addEventListener('keyup', updateCaption);
-    sectionSelect.addEventListener('change', updateCaption);
+            const canvasSize = canvas.width;
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-    frameButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
-            button.firstElementChild.classList.add('frame-selected');
-            selectedFrame = button.dataset.frameSrc;
-            frameImage.src = selectedFrame;
-            frameImage.onload = () => checkAndDrawImage();
-            frameImage.onerror = () => {
-                canvasPlaceholder.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
-                canvasPlaceholder.classList.add('text-red-400');
-                canvasPlaceholder.classList.remove('hidden');
+            const imgWidth = uploadedImage.width;
+            const imgHeight = uploadedImage.height;
+            const imgAspectRatio = imgWidth / imgHeight;
+
+            let sWidth = imgAspectRatio > 1 ? imgHeight : imgWidth;
+            let sHeight = sWidth;
+
+            sWidth *= scale;
+            sHeight *= scale;
+            
+            let sx = (imgWidth - sWidth) / 2 + offsetX;
+            let sy = (imgHeight - sHeight) / 2 + offsetY;
+
+            ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
+            ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
+            updateButtonStates();
+        }
+
+        function checkAndDrawImage() {
+            if (selectedFrame && userImage) {
+                isReadyToDraw = true;
+                previewLoader.style.display = 'block';
                 canvas.classList.add('hidden');
+                canvasPlaceholder.classList.add('hidden');
+                setTimeout(draw, 500);
+            } else {
+                isReadyToDraw = false;
+                previewLoader.style.display = 'none';
+                canvas.classList.add('hidden');
+                canvasPlaceholder.classList.remove('hidden');
+                adjustmentControls.classList.add('hidden');
+            }
+            updateButtonStates();
+        }
+
+        // --- Reusable Save/Download Function ---
+        function saveOrOpenImage() {
+            if (!isReadyToDraw) return;
+            downloadError.textContent = '';
+            try {
+                canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        downloadError.textContent = "Failed to create image.";
+                        return;
+                    }
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'dpblast_profile_by_decs.png';
+                    link.href = url;
+
+                    // This part is tricky. Direct click might be blocked.
+                    // Opening a new window might also be blocked.
+                    // We try to open a new tab first as a more reliable action on mobile.
+                    const newTab = window.open(url, '_blank');
+                    if (newTab) {
+                        newTab.focus();
+                    } else {
+                        // If window.open is blocked, fall back to clicking the link.
+                        downloadError.textContent = 'Pop-up blocked! Trying direct download...';
+                        link.click();
+                    }
+                    setTimeout(() => URL.revokeObjectURL(url), 1000); // Cleanup
+                }, 'image/png');
+            } catch (error) {
+                downloadError.textContent = "Save failed. Please try a different browser.";
+            }
+        }
+        
+        // --- Event Listeners Setup ---
+        nameInput.addEventListener('keyup', updateCaption);
+        sectionSelect.addEventListener('change', updateCaption);
+
+        frameButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
+                button.firstElementChild.classList.add('frame-selected');
+                selectedFrame = button.dataset.frameSrc;
+                frameImage.src = selectedFrame;
+                frameImage.onload = checkAndDrawImage;
+                frameImage.onerror = () => alert('Frame image failed to load.');
+            });
+        });
+
+        imageUploadBtn.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.onload = () => {
+                        scale = 1.0; offsetX = 0; offsetY = 0;
+                        checkAndDrawImage();
+                    }
+                };
+                reader.readAsDataURL(file);
+                fileNameDisplay.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
             }
         });
-    });
 
-    imageUploadBtn.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                userImage = e.target.result;
-                uploadedImage.src = userImage;
-                uploadedImage.onload = () => {
-                    // Reset adjustments for new image
-                    scale = 1.0;
-                    offsetX = 0;
-                    offsetY = 0;
-                    checkAndDrawImage();
-                }
-            };
-            reader.readAsDataURL(file);
-            fileNameDisplay.textContent = file.name;
-        } else {
-            userImage = null;
-            fileNameDisplay.textContent = 'No file chosen';
-            checkAndDrawImage();
+        downloadBtn.addEventListener('click', saveOrOpenImage);
+
+        // Long Press Listeners
+        function startPress(e) {
+            if (!isReadyToDraw) return;
+            e.preventDefault();
+            pressTimer = setTimeout(saveOrOpenImage, 800); // 800ms for long press
         }
-    });
+        function cancelPress() { clearTimeout(pressTimer); }
+        canvas.addEventListener('mousedown', startPress);
+        canvas.addEventListener('mouseup', cancelPress);
+        canvas.addEventListener('mouseleave', cancelPress);
+        canvas.addEventListener('touchstart', startPress, { passive: false });
+        canvas.addEventListener('touchend', cancelPress);
+        canvas.addEventListener('touchmove', cancelPress);
 
-    // --- Adjustment Control Event Listeners ---
-    upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
-    downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
-    leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
-    rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
-    zoomInBtn.addEventListener('click', () => { scale -= scaleStep; if(scale < 0.1) scale = 0.1; draw(); });
-    zoomOutBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
-    resetBtn.addEventListener('click', () => {
-        scale = 1.0;
-        offsetX = 0;
-        offsetY = 0;
-        draw();
-    });
-
-    downloadBtn.addEventListener('click', () => {
-    downloadError.textContent = '';
-    try {
-        canvas.toBlob(function(blob) {
-            if (!blob) {
-                downloadError.textContent = "Failed to create image. Please try again.";
-                return;
-            }
-            const url = URL.createObjectURL(blob);
-
-            // Create a temporary link to trigger the download
-            const link = document.createElement('a');
-            link.download = 'dpblast_profile.png';
-            link.href = url;
-
-            // For most browsers, this will trigger a download
-            link.click();
-
-            // A fallback for browsers that block the programmatic click
-            // or don't support the 'download' attribute.
-            // This will open the image in a new tab.
-            setTimeout(() => {
-                // Clean up the object URL to free memory
-                URL.revokeObjectURL(url);
-                
-                // If the download didn't start, open in a new tab
-                // This is a simplified check. A more robust solution might
-                // involve checking if the window is still focused.
-                const newTab = window.open(url, '_blank');
-                if(!newTab){
-                    downloadError.textContent = "Please disable your pop-up blocker to view the image.";
-                }
-            }, 100);
-
-        }, 'image/png');
-    } catch (error) {
-        console.error("Download failed:", error);
-        downloadError.textContent = "An error occurred. Please try a different browser or image.";
-        // Final fallback: try to open the data URL directly
-        try {
-            const dataUrl = canvas.toDataURL('image/png');
-            const newTab = window.open(dataUrl, '_blank');
-            if(!newTab){
-                 downloadError.textContent = "Please disable your pop-up blocker to view the image.";
-            }
-        } catch (e) {
-            console.error("Fallback to data URL failed:", e);
-        }
-    }
-});
-
-    // --- Core Functions ---
-
-    function showPreviewLoader() {
-        canvas.classList.add('hidden');
-        canvasPlaceholder.classList.add('hidden');
-        previewLoader.style.display = 'block';
-        adjustmentControls.classList.add('hidden');
-    }
-
-    function hidePreviewLoader() {
-        previewLoader.style.display = 'none';
-    }
-
-    function checkAndDrawImage() {
-        if (selectedFrame && userImage) {
-            isReadyToDraw = true;
-            showPreviewLoader();
-            setTimeout(() => {
-                draw();
-            }, 3000);
-        } else {
-            isReadyToDraw = false;
-            hidePreviewLoader();
-            canvas.classList.add('hidden');
-            canvasPlaceholder.classList.remove('hidden');
-            adjustmentControls.classList.add('hidden');
-        }
-        updateButtonStates();
-    }
-    
-    function draw() {
-        if (!isReadyToDraw) return;
+        // Adjustment Listeners
+        upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
+        downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
+        leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
+        rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
+        zoomInBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
+        zoomOutBtn.addEventListener('click', () => { if (scale - scaleStep > 0.1) scale -= scaleStep; draw(); });
+        resetBtn.addEventListener('click', () => { scale = 1.0; offsetX = 0; offsetY = 0; draw(); });
         
-        hidePreviewLoader();
-        canvasPlaceholder.classList.add('hidden');
-        canvas.classList.remove('hidden');
-        adjustmentControls.classList.remove('hidden');
+        copyCaptionBtn.addEventListener('click', () => {
+            captionOutput.select();
+            navigator.clipboard.writeText(captionOutput.value).then(() => {
+                const feedback = document.getElementById('copy-feedback');
+                feedback.textContent = 'Caption copied!';
+                setTimeout(() => { feedback.textContent = ''; }, 2000);
+            });
+        });
 
-        const canvasSize = canvas.width;
-        ctx.clearRect(0, 0, canvasSize, canvasSize);
-
-        const imgWidth = uploadedImage.width;
-        const imgHeight = uploadedImage.height;
-        let sx, sy, sWidth, sHeight;
-
-        const imgAspectRatio = imgWidth / imgHeight;
-        
-        if (imgAspectRatio > 1) { // Landscape
-            sHeight = imgHeight;
-            sWidth = imgHeight;
-        } else { // Portrait or square
-            sWidth = imgWidth;
-            sHeight = imgWidth;
-        }
-
-        // Apply zoom
-        sWidth *= scale;
-        sHeight *= scale;
-        
-        // Center the crop
-        sx = (imgWidth - sWidth) / 2;
-        sy = (imgHeight - sHeight) / 2;
-
-        // Apply pan/offset
-        sx += offsetX;
-        sy += offsetY;
-
-        ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
-        ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
-        
-        updateButtonStates();
-    }
-
-    function updateCaption() {
-        const name = nameInput.value.trim();
-        const section = sectionSelect.value;
-        
-        if (name && section) {
-            let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
-            
-            captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
-        } else {
-            captionOutput.value = '';
-        }
-        updateButtonStates();
-    }
-
-    function updateButtonStates() {
-        downloadBtn.disabled = !isReadyToDraw;
-        copyCaptionBtn.disabled = captionOutput.value.length === 0;
-    }
-
-    // --- Initial Setup ---
-    updateCaption();
-</script>
+        // --- Initial Setup ---
+        updateCaption();
+    </script>
 </body>
 </html>
