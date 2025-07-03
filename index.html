@@ -50,7 +50,7 @@
         @keyframes l16 { 33% {inset:-10px;transform:rotate(0deg)} 66% {inset:-10px;transform:rotate(90deg)} 100% {inset:0;transform:rotate(90deg)} }
         
         #main-content, #browser-blocker { display: none; }
-        canvas { max-width: 100%; height: auto; border-radius: 0.5rem; }
+        canvas { max-width: 100%; height: auto; border-radius: 0.5rem; cursor: pointer; }
         .custom-transition { transition: all 0.3s ease-in-out; }
         .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #F97316; }
         input[type="file"] { display: none; }
@@ -60,6 +60,16 @@
         #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 0, 0, 0.4); }
         #app-logo { transition: max-height 0.3s ease-in-out; max-height: 50px; width: auto; }
         #app-header.scrolled #app-logo { max-height: 30px; }
+        
+        /* Utility class to prevent text selection */
+        .no-select {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none;   /* Safari */
+            -khtml-user-select: none;    /* Konqueror HTML */
+            -moz-user-select: none;      /* Old versions of Firefox */
+            -ms-user-select: none;       /* Internet Explorer/Edge */
+            user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+        }
     </style>
 </head>
 <body class="text-gray-200">
@@ -104,11 +114,11 @@
             <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
                 <div class="space-y-6">
                     <div>
-                        <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2">1. Enter Your Name</label>
+                        <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2 no-select">1. Enter Your Name</label>
                         <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
                     </div>
                     <div>
-                        <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2">2. Select Your Section</label>
+                        <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2 no-select">2. Select Your Section</label>
                         <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             <option value="" disabled selected>Choose your course & section...</option>
                             <option value="I-CpE1">I-CpE1</option> <option value="II-CpE1">II-CpE1</option> <option value="III-CpE1">III-CpE1</option> <option value="IV-CpE1">IV-CpE1</option>
@@ -116,19 +126,19 @@
                         </select>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-300 mb-2">3. Choose Your Frame</h3>
+                        <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">3. Choose Your Frame</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <button class="frame-btn" data-frame-src="cpe_frame.png"><img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';"></button>
                             <button class="frame-btn" data-frame-src="cs_frame.png"><img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';"></button>
                         </div>
                     </div>
                     <div>
-                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20">4. Upload Your Picture</label>
+                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20 no-select">4. Upload Your Picture</label>
                         <input type="file" id="image-upload-btn" accept="image/*">
                         <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-300 mb-2">5. Preview</h3>
+                        <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">5. Preview</h3>
                         <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
                            <div id="preview-loader" class="preview-loader" style="display: none;"></div>
                            <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
@@ -136,7 +146,7 @@
                         </div>
                     </div>
                     <div id="adjustment-controls" class="hidden">
-                        <h3 class="text-sm font-medium text-gray-300 mb-2 text-center">6. Adjust Picture</h3>
+                        <h3 class="text-sm font-medium text-gray-300 mb-2 text-center no-select">6. Adjust Picture</h3>
                         <div class="flex items-center justify-center gap-4">
                             <div class="flex flex-col gap-2">
                                 <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none text-lg">+</button>
@@ -153,12 +163,12 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <p class="text-xs text-gray-400 text-center mb-2">Use the button below to save your image.</p>
+                            <p class="text-xs text-gray-400 text-center mb-2 no-select">Tip: Long-press the image or use the button below to save!</p>
                             <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Download Photo</button>
                             <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
                         </div>
                         <div>
-                            <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2">Generated Caption</label>
+                            <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2 no-select">Generated Caption</label>
                             <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
                             <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Copy Caption</button>
                             <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
@@ -261,6 +271,7 @@
         let userImageSrc = null;
         let scale = 1.0, offsetX = 0, offsetY = 0;
         const panStep = 10, scaleStep = 0.1;
+        let pressTimer = null;
 
         // --- Image Objects ---
         const frameImage = new Image();
@@ -331,6 +342,32 @@
         function downloadImage() {
             if (downloadBtn.disabled) return;
             downloadError.textContent = '';
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // On mobile, the most robust method is to open the image in a new tab for the user to save.
+            if (isMobile) {
+                try {
+                    canvas.toBlob(function(blob) {
+                        if (!blob) {
+                            downloadError.textContent = "Error: Could not create image.";
+                            return;
+                        }
+                        const url = URL.createObjectURL(blob);
+                        const newTab = window.open(url, '_blank');
+                        if (!newTab) {
+                            downloadError.textContent = "Please disable your pop-up blocker to save the image.";
+                        }
+                        // Clean up the blob URL after a short delay
+                        setTimeout(() => URL.revokeObjectURL(url), 10000);
+                    }, 'image/png');
+                } catch (error) {
+                    downloadError.textContent = "An error occurred. Please try a different browser.";
+                }
+                return;
+            }
+
+            // On desktop, trigger a direct download.
             try {
                 const link = document.createElement('a');
                 link.download = 'dpblast_profile.png';
@@ -371,6 +408,27 @@
         });
 
         downloadBtn.addEventListener('click', downloadImage);
+        
+        // --- Long Press Listeners ---
+        function startPress(e) {
+            if (downloadBtn.disabled) return;
+            // Prevent default browser actions like context menu or text selection
+            e.preventDefault();
+            pressTimer = setTimeout(downloadImage, 800); // 800ms for long press
+        }
+
+        function cancelPress() {
+            clearTimeout(pressTimer);
+        }
+
+        // Attach listeners for both mouse and touch events
+        canvas.addEventListener('mousedown', startPress);
+        canvas.addEventListener('mouseup', cancelPress);
+        canvas.addEventListener('mouseleave', cancelPress);
+        // Use { passive: false } to allow preventDefault() on touch devices
+        canvas.addEventListener('touchstart', startPress, { passive: false });
+        canvas.addEventListener('touchend', cancelPress);
+        canvas.addEventListener('touchmove', cancelPress); // Cancel if the finger moves
 
         // Adjustment Listeners
         upBtn.addEventListener('click', () => { offsetY -= panStep; drawCanvas(); });
