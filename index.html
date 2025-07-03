@@ -293,261 +293,271 @@
         </div>
     </div>
 
-    <script>
-        // --- Loading Screen Logic ---
-        window.addEventListener('load', () => {
-            const loadingScreen = document.getElementById('loading-screen');
-            const mainContent = document.getElementById('main-content');
-            
+   <script>
+    // --- Loading Screen Logic ---
+    window.addEventListener('load', () => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
             setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                }, 500);
-            }, 3000); 
-        });
+                loadingScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+            }, 500);
+        }, 3000); 
+    });
 
-        // --- Sticky Header Scroll Logic ---
-        const header = document.getElementById('app-header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-        
-        // --- Visitor Count Logic ---
-        let count = localStorage.getItem('visitorCount');
-        if (count === null) {
-            count = 1;
+    // --- Sticky Header Scroll Logic ---
+    const header = document.getElementById('app-header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
         } else {
-            count = parseInt(count) + 1;
+            header.classList.remove('scrolled');
         }
-        localStorage.setItem('visitorCount', count);
-        const visitorCountElement = document.getElementById('visitor-count');
-        if(visitorCountElement) {
-            visitorCountElement.textContent = count;
-        }
+    });
+    
+    // --- Visitor Count Logic ---
+    let count = localStorage.getItem('visitorCount');
+    if (count === null) {
+        count = 1;
+    } else {
+        count = parseInt(count) + 1;
+    }
+    localStorage.setItem('visitorCount', count);
+    const visitorCountElement = document.getElementById('visitor-count');
+    if(visitorCountElement) {
+        visitorCountElement.textContent = count;
+    }
 
-        // --- DOM Element References ---
-        const nameInput = document.getElementById('name-input');
-        const sectionSelect = document.getElementById('section-select');
-        const frameButtons = document.querySelectorAll('.frame-btn');
-        const imageUploadBtn = document.getElementById('image-upload-btn');
-        const fileNameDisplay = document.getElementById('file-name');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const canvasPlaceholder = document.getElementById('canvas-placeholder');
-        const previewLoader = document.getElementById('preview-loader');
-        const downloadBtn = document.getElementById('download-btn');
-        const downloadError = document.getElementById('download-error');
-        const captionOutput = document.getElementById('caption-output');
-        const copyCaptionBtn = document.getElementById('copy-caption-btn');
-        const copyFeedback = document.getElementById('copy-feedback');
-        // New Adjustment Control References
-        const adjustmentControls = document.getElementById('adjustment-controls');
-        const upBtn = document.getElementById('up-btn');
-        const downBtn = document.getElementById('down-btn');
-        const leftBtn = document.getElementById('left-btn');
-        const rightBtn = document.getElementById('right-btn');
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const resetBtn = document.getElementById('reset-btn');
+    // --- DOM Element References ---
+    const nameInput = document.getElementById('name-input');
+    const sectionSelect = document.getElementById('section-select');
+    const frameButtons = document.querySelectorAll('.frame-btn');
+    const imageUploadBtn = document.getElementById('image-upload-btn');
+    const fileNameDisplay = document.getElementById('file-name');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const canvasPlaceholder = document.getElementById('canvas-placeholder');
+    const previewLoader = document.getElementById('preview-loader');
+    const downloadBtn = document.getElementById('download-btn');
+    const downloadError = document.getElementById('download-error');
+    const captionOutput = document.getElementById('caption-output');
+    const copyCaptionBtn = document.getElementById('copy-caption-btn');
+    const copyFeedback = document.getElementById('copy-feedback');
+    // New Adjustment Control References
+    const adjustmentControls = document.getElementById('adjustment-controls');
+    const upBtn = document.getElementById('up-btn');
+    const downBtn = document.getElementById('down-btn');
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const resetBtn = document.getElementById('reset-btn');
 
-        // --- State Variables ---
-        let selectedFrame = null;
-        let userImage = null;
-        let isReadyToDraw = false;
-        // New State for Adjustments
-        let scale = 1.0;
-        let offsetX = 0;
-        let offsetY = 0;
-        const panStep = 10;
-        const scaleStep = 0.1;
+    // --- State Variables ---
+    let selectedFrame = null;
+    let userImage = null;
+    let isReadyToDraw = false;
+    // New State for Adjustments
+    let scale = 1.0;
+    let offsetX = 0;
+    let offsetY = 0;
+    const panStep = 10;
+    const scaleStep = 0.1;
 
-        // --- Image Objects ---
-        const frameImage = new Image();
-        const uploadedImage = new Image();
-        
-        // --- Event Listeners ---
-        nameInput.addEventListener('keyup', updateCaption);
-        sectionSelect.addEventListener('change', updateCaption);
+    // --- Image Objects ---
+    const frameImage = new Image();
+    const uploadedImage = new Image();
+    
+    // --- Event Listeners ---
+    nameInput.addEventListener('keyup', updateCaption);
+    sectionSelect.addEventListener('change', updateCaption);
 
-        frameButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
-                button.firstElementChild.classList.add('frame-selected');
-                selectedFrame = button.dataset.frameSrc;
-                frameImage.src = selectedFrame;
-                frameImage.onload = () => checkAndDrawImage();
-                frameImage.onerror = () => {
-                    canvasPlaceholder.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
-                    canvasPlaceholder.classList.add('text-red-400');
-                    canvasPlaceholder.classList.remove('hidden');
-                    canvas.classList.add('hidden');
-                }
-            });
-        });
-
-        imageUploadBtn.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    userImage = e.target.result;
-                    uploadedImage.src = userImage;
-                    uploadedImage.onload = () => {
-                        // Reset adjustments for new image
-                        scale = 1.0;
-                        offsetX = 0;
-                        offsetY = 0;
-                        checkAndDrawImage();
-                    }
-                };
-                reader.readAsDataURL(file);
-                fileNameDisplay.textContent = file.name;
-            } else {
-                userImage = null;
-                fileNameDisplay.textContent = 'No file chosen';
-                checkAndDrawImage();
+    frameButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
+            button.firstElementChild.classList.add('frame-selected');
+            selectedFrame = button.dataset.frameSrc;
+            frameImage.src = selectedFrame;
+            frameImage.onload = () => checkAndDrawImage();
+            frameImage.onerror = () => {
+                canvasPlaceholder.textContent = 'Error: Frame image not found. Make sure it has a .png extension and is in the same folder as the HTML file.';
+                canvasPlaceholder.classList.add('text-red-400');
+                canvasPlaceholder.classList.remove('hidden');
+                canvas.classList.add('hidden');
             }
         });
+    });
 
-        // --- Adjustment Control Event Listeners ---
-        upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
-        downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
-        leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
-        rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
-        zoomInBtn.addEventListener('click', () => { scale -= scaleStep; if(scale < 0.1) scale = 0.1; draw(); });
-        zoomOutBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
-        resetBtn.addEventListener('click', () => {
-            scale = 1.0;
-            offsetX = 0;
-            offsetY = 0;
-            draw();
-        });
+    imageUploadBtn.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                userImage = e.target.result;
+                uploadedImage.src = userImage;
+                uploadedImage.onload = () => {
+                    // Reset adjustments for new image
+                    scale = 1.0;
+                    offsetX = 0;
+                    offsetY = 0;
+                    checkAndDrawImage();
+                }
+            };
+            reader.readAsDataURL(file);
+            fileNameDisplay.textContent = file.name;
+        } else {
+            userImage = null;
+            fileNameDisplay.textContent = 'No file chosen';
+            checkAndDrawImage();
+        }
+    });
 
-        downloadBtn.addEventListener('click', () => {
-            downloadError.textContent = '';
-            try {
+    // --- Adjustment Control Event Listeners ---
+    upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
+    downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
+    leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
+    rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
+    zoomInBtn.addEventListener('click', () => { scale -= scaleStep; if(scale < 0.1) scale = 0.1; draw(); });
+    zoomOutBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
+    resetBtn.addEventListener('click', () => {
+        scale = 1.0;
+        offsetX = 0;
+        offsetY = 0;
+        draw();
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        downloadError.textContent = '';
+        try {
+            // Use toBlob for better mobile support
+            canvas.toBlob(function(blob) {
                 const link = document.createElement('a');
                 link.download = 'dpblast_profile.png';
-                link.href = canvas.toDataURL('image/png');
+                
+                // Create a URL for the blob
+                link.href = URL.createObjectURL(blob);
+                
+                // Programmatically click the link to trigger the download
                 link.click();
-            } catch (error) {
-                console.error("Download failed:", error);
-                downloadError.textContent = "Download failed. Please try a different browser or image.";
-            }
-        });
+                
+                // Revoke the object URL to free up memory
+                URL.revokeObjectURL(link.href);
+            }, 'image/png');
+        } catch (error) {
+            console.error("Download failed:", error);
+            downloadError.textContent = "Download failed. Please try a different browser or image.";
+        }
+    });
 
-        copyCaptionBtn.addEventListener('click', () => {
-            captionOutput.select();
-            try {
-                document.execCommand('copy');
-                copyFeedback.textContent = 'Caption copied!';
-                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-            } catch (err) {
-                copyFeedback.textContent = 'Failed to copy!';
-                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-            }
-        });
+    copyCaptionBtn.addEventListener('click', () => {
+        captionOutput.select();
+        try {
+            document.execCommand('copy');
+            copyFeedback.textContent = 'Caption copied!';
+            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+        } catch (err) {
+            copyFeedback.textContent = 'Failed to copy!';
+            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+        }
+    });
 
-        // --- Core Functions ---
+    // --- Core Functions ---
 
-        function showPreviewLoader() {
+    function showPreviewLoader() {
+        canvas.classList.add('hidden');
+        canvasPlaceholder.classList.add('hidden');
+        previewLoader.style.display = 'block';
+        adjustmentControls.classList.add('hidden');
+    }
+
+    function hidePreviewLoader() {
+        previewLoader.style.display = 'none';
+    }
+
+    function checkAndDrawImage() {
+        if (selectedFrame && userImage) {
+            isReadyToDraw = true;
+            showPreviewLoader();
+            setTimeout(() => {
+                draw();
+            }, 3000);
+        } else {
+            isReadyToDraw = false;
+            hidePreviewLoader();
             canvas.classList.add('hidden');
-            canvasPlaceholder.classList.add('hidden');
-            previewLoader.style.display = 'block';
+            canvasPlaceholder.classList.remove('hidden');
             adjustmentControls.classList.add('hidden');
         }
-
-        function hidePreviewLoader() {
-            previewLoader.style.display = 'none';
-        }
-
-        function checkAndDrawImage() {
-            if (selectedFrame && userImage) {
-                isReadyToDraw = true;
-                showPreviewLoader();
-                setTimeout(() => {
-                    draw();
-                }, 3000);
-            } else {
-                isReadyToDraw = false;
-                hidePreviewLoader();
-                canvas.classList.add('hidden');
-                canvasPlaceholder.classList.remove('hidden');
-                adjustmentControls.classList.add('hidden');
-            }
-            updateButtonStates();
-        }
+        updateButtonStates();
+    }
+    
+    function draw() {
+        if (!isReadyToDraw) return;
         
-        function draw() {
-            if (!isReadyToDraw) return;
-            
-            hidePreviewLoader();
-            canvasPlaceholder.classList.add('hidden');
-            canvas.classList.remove('hidden');
-            adjustmentControls.classList.remove('hidden');
+        hidePreviewLoader();
+        canvasPlaceholder.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        adjustmentControls.classList.remove('hidden');
 
-            const canvasSize = canvas.width;
-            ctx.clearRect(0, 0, canvasSize, canvasSize);
+        const canvasSize = canvas.width;
+        ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-            const imgWidth = uploadedImage.width;
-            const imgHeight = uploadedImage.height;
-            let sx, sy, sWidth, sHeight;
+        const imgWidth = uploadedImage.width;
+        const imgHeight = uploadedImage.height;
+        let sx, sy, sWidth, sHeight;
 
-            const imgAspectRatio = imgWidth / imgHeight;
-            
-            if (imgAspectRatio > 1) { // Landscape
-                sHeight = imgHeight;
-                sWidth = imgHeight;
-            } else { // Portrait or square
-                sWidth = imgWidth;
-                sHeight = imgWidth;
-            }
-
-            // Apply zoom
-            sWidth *= scale;
-            sHeight *= scale;
-            
-            // Center the crop
-            sx = (imgWidth - sWidth) / 2;
-            sy = (imgHeight - sHeight) / 2;
-
-            // Apply pan/offset
-            sx += offsetX;
-            sy += offsetY;
-
-            ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
-            ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
-            
-            updateButtonStates();
+        const imgAspectRatio = imgWidth / imgHeight;
+        
+        if (imgAspectRatio > 1) { // Landscape
+            sHeight = imgHeight;
+            sWidth = imgHeight;
+        } else { // Portrait or square
+            sWidth = imgWidth;
+            sHeight = imgWidth;
         }
 
-        function updateCaption() {
-            const name = nameInput.value.trim();
-            const section = sectionSelect.value;
+        // Apply zoom
+        sWidth *= scale;
+        sHeight *= scale;
+        
+        // Center the crop
+        sx = (imgWidth - sWidth) / 2;
+        sy = (imgHeight - sHeight) / 2;
+
+        // Apply pan/offset
+        sx += offsetX;
+        sy += offsetY;
+
+        ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
+        ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
+        
+        updateButtonStates();
+    }
+
+    function updateCaption() {
+        const name = nameInput.value.trim();
+        const section = sectionSelect.value;
+        
+        if (name && section) {
+            let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
             
-            if (name && section) {
-                let course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
-                
-                captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
-            } else {
-                captionOutput.value = '';
-            }
-            updateButtonStates();
+            captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
+        } else {
+            captionOutput.value = '';
         }
+        updateButtonStates();
+    }
 
-        function updateButtonStates() {
-            downloadBtn.disabled = !isReadyToDraw;
-            copyCaptionBtn.disabled = captionOutput.value.length === 0;
-        }
+    function updateButtonStates() {
+        downloadBtn.disabled = !isReadyToDraw;
+        copyCaptionBtn.disabled = captionOutput.value.length === 0;
+    }
 
-        // --- Initial Setup ---
-        updateCaption();
-    </script>
+    // --- Initial Setup ---
+    updateCaption();
+</script>
 </body>
 </html>
