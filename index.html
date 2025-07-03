@@ -64,11 +64,13 @@
 </head>
 <body class="text-gray-200">
 
+    <!-- Loading Screen -->
     <div id="loading-screen">
         <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
         <div class="loader"></div>
     </div>
     
+    <!-- Browser Blocker Screen -->
     <div id="browser-blocker" class="fixed inset-0 z-[200] flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
         <div class="glass-container max-w-sm w-full p-6 rounded-2xl text-center shadow-xl">
             <h2 class="text-2xl font-bold text-white mb-3">Unsupported Browser</h2>
@@ -80,6 +82,7 @@
         </div>
     </div>
 
+    <!-- Main Website Content -->
     <div id="main-content">
         <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
             <div class="container mx-auto flex justify-center items-center">
@@ -136,8 +139,8 @@
                         <h3 class="text-sm font-medium text-gray-300 mb-2 text-center">6. Adjust Picture</h3>
                         <div class="flex items-center justify-center gap-4">
                             <div class="flex flex-col gap-2">
-                                <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">+</button>
-                                <button id="zoom-out-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none">-</button>
+                                <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none text-lg">+</button>
+                                <button id="zoom-out-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none text-lg">-</button>
                             </div>
                             <div class="grid grid-cols-3 gap-1 w-24">
                                 <div></div><button id="up-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↑</button><div></div>
@@ -187,10 +190,9 @@
         // --- Browser and System Checks ---
         (function() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            // Detect Facebook/Messenger in-app browsers
             if (/FBAN|FBAV|Messenger/i.test(userAgent)) {
                 document.getElementById('browser-blocker').style.display = 'flex';
-                document.getElementById('loading-screen').style.display = 'none'; // Hide loading screen
+                document.getElementById('loading-screen').style.display = 'none';
                 
                 const copyBtn = document.getElementById('copy-link-btn');
                 const feedbackDiv = document.getElementById('copy-link-feedback');
@@ -202,13 +204,10 @@
                         feedbackDiv.textContent = 'Failed to copy link.';
                     });
                 });
-                return; // Stop further script execution
+                return;
             }
-
-            // If browser is fine, proceed with loading the page
             document.getElementById('main-content').style.display = 'block';
         })();
-
 
         // --- Loading Screen Logic ---
         window.addEventListener('load', () => {
@@ -218,7 +217,7 @@
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
                 }, 500);
-            }, 2000); // Shortened load time
+            }, 1500);
         });
 
         // --- Sticky Header Scroll Logic ---
@@ -228,8 +227,8 @@
         });
         
         // --- Visitor Count Logic ---
-        let count = localStorage.getItem('visitorCount');
-        count = count ? parseInt(count) + 1 : 1;
+        let count = localStorage.getItem('visitorCount') || 0;
+        count = parseInt(count) + 1;
         localStorage.setItem('visitorCount', count);
         document.getElementById('visitor-count').textContent = count;
 
@@ -247,8 +246,8 @@
         const downloadError = document.getElementById('download-error');
         const captionOutput = document.getElementById('caption-output');
         const copyCaptionBtn = document.getElementById('copy-caption-btn');
+        const copyFeedback = document.getElementById('copy-feedback');
         const adjustmentControls = document.getElementById('adjustment-controls');
-        // ... other element references
         const upBtn = document.getElementById('up-btn');
         const downBtn = document.getElementById('down-btn');
         const leftBtn = document.getElementById('left-btn');
@@ -258,40 +257,27 @@
         const resetBtn = document.getElementById('reset-btn');
 
         // --- State Variables ---
-        let selectedFrame = null, userImage = null, isReadyToDraw = false;
+        let selectedFrameSrc = null;
+        let userImageSrc = null;
         let scale = 1.0, offsetX = 0, offsetY = 0;
         const panStep = 10, scaleStep = 0.1;
         let pressTimer = null;
 
         // --- Image Objects ---
         const frameImage = new Image();
+        frameImage.crossOrigin = "Anonymous";
         const uploadedImage = new Image();
-        
-        // --- Core Functions ---
-        function updateButtonStates() {
-            const ready = isReadyToDraw;
-            downloadBtn.disabled = !ready;
-            copyCaptionBtn.disabled = captionOutput.value.length === 0;
-        }
+        uploadedImage.crossOrigin = "Anonymous";
 
-        function updateCaption() {
-            const name = nameInput.value.trim();
-            const section = sectionSelect.value;
-            if (name && section) {
-                const course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
-                captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
-            } else {
-                captionOutput.value = '';
-            }
-            updateButtonStates();
-        }
+        // --- Core Drawing and State Management ---
+        function drawCanvas() {
+            if (!frameImage.src || !uploadedImage.src) return;
 
-        function draw() {
-            if (!isReadyToDraw) return;
             previewLoader.style.display = 'none';
             canvasPlaceholder.classList.add('hidden');
             canvas.classList.remove('hidden');
             adjustmentControls.classList.remove('hidden');
+            downloadBtn.disabled = false;
 
             const canvasSize = canvas.width;
             ctx.clearRect(0, 0, canvasSize, canvasSize);
@@ -311,29 +297,37 @@
 
             ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
             ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
-            updateButtonStates();
         }
 
-        function checkAndDrawImage() {
-            if (selectedFrame && userImage) {
-                isReadyToDraw = true;
-                previewLoader.style.display = 'block';
-                canvas.classList.add('hidden');
-                canvasPlaceholder.classList.add('hidden');
-                setTimeout(draw, 500);
-            } else {
-                isReadyToDraw = false;
-                previewLoader.style.display = 'none';
-                canvas.classList.add('hidden');
-                canvasPlaceholder.classList.remove('hidden');
-                adjustmentControls.classList.add('hidden');
+        function attemptToDraw() {
+            if (selectedFrameSrc && userImageSrc) {
+                if (frameImage.complete && uploadedImage.complete) {
+                    drawCanvas();
+                } else {
+                    previewLoader.style.display = 'block';
+                    canvas.classList.add('hidden');
+                }
             }
-            updateButtonStates();
+        }
+        
+        frameImage.onload = attemptToDraw;
+        uploadedImage.onload = attemptToDraw;
+
+        function updateCaption() {
+            const name = nameInput.value.trim();
+            const section = sectionSelect.value;
+            copyCaptionBtn.disabled = !(name && section);
+            if (name && section) {
+                const course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
+                captionOutput.value = `Meet ${name}, a student from ${section} (${course}), proudly learning and thriving at 𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬!\n\nA new academic year means a fresh chance to explore, innovate, and grow in the ever-evolving world of technology and computing.\nAs future engineers and developers, we’re not just here to study — we’re here to create, improve, and inspire the digital future.\n\nLet’s start strong and stay passionate, united by our identity as proud members of 𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒.\nBe part of the official DP blast as we officially kick off the First Semester of A.Y. 2025–2026!\n𝐓𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐢𝐬 𝐨𝐮𝐫𝐬 𝐭𝐨 𝐛𝐮𝐢𝐥𝐝. 𝐓𝐢𝐦𝐞 𝐭𝐨 𝐬𝐡𝐨𝐰 𝐭𝐡𝐞 𝐰𝐨𝐫𝐥𝐝 𝐰𝐡𝐚𝐭 𝐰𝐞'𝐫𝐞 𝐦𝐚𝐝𝐞 𝐨𝐟.\n#𝐂𝐨𝐝𝐞𝐑𝐞𝐚𝐝𝐲 #𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫𝐓𝐡𝐞𝐅𝐮𝐭𝐮𝐫𝐞\n\n#𝐓𝐚𝐭𝐚𝐤𝐃𝐄𝐂𝐒 #𝐋𝐂𝐁𝐀𝐢𝐚𝐧𝐬 #𝐂𝐒𝐒𝐭𝐫𝐨𝐧𝐠 #𝐂𝐩𝐄𝐁𝐮𝐢𝐥𝐝𝐬`;
+            } else {
+                captionOutput.value = '';
+            }
         }
 
-        // --- Reusable Save/Download Function ---
+        // --- Save/Download Function ---
         function saveOrOpenImage() {
-            if (!isReadyToDraw) return;
+            if (downloadBtn.disabled) return;
             downloadError.textContent = '';
             try {
                 canvas.toBlob(function(blob) {
@@ -342,22 +336,18 @@
                         return;
                     }
                     const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.download = 'dpblast_profile_by_decs.png';
-                    link.href = url;
-
-                    // This part is tricky. Direct click might be blocked.
-                    // Opening a new window might also be blocked.
-                    // We try to open a new tab first as a more reliable action on mobile.
                     const newTab = window.open(url, '_blank');
                     if (newTab) {
                         newTab.focus();
                     } else {
-                        // If window.open is blocked, fall back to clicking the link.
-                        downloadError.textContent = 'Pop-up blocked! Trying direct download...';
+                        downloadError.textContent = 'Please enable pop-ups to save the image.';
+                        // Fallback for when popups are blocked
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'dpblast_profile.png';
                         link.click();
                     }
-                    setTimeout(() => URL.revokeObjectURL(url), 1000); // Cleanup
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
                 }, 'image/png');
             } catch (error) {
                 downloadError.textContent = "Save failed. Please try a different browser.";
@@ -372,10 +362,9 @@
             button.addEventListener('click', () => {
                 frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
                 button.firstElementChild.classList.add('frame-selected');
-                selectedFrame = button.dataset.frameSrc;
-                frameImage.src = selectedFrame;
-                frameImage.onload = checkAndDrawImage;
-                frameImage.onerror = () => alert('Frame image failed to load.');
+                selectedFrameSrc = button.dataset.frameSrc;
+                frameImage.src = selectedFrameSrc;
+                attemptToDraw();
             });
         });
 
@@ -384,11 +373,10 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    uploadedImage.src = e.target.result;
-                    uploadedImage.onload = () => {
-                        scale = 1.0; offsetX = 0; offsetY = 0;
-                        checkAndDrawImage();
-                    }
+                    scale = 1.0; offsetX = 0; offsetY = 0; // Reset adjustments
+                    userImageSrc = e.target.result;
+                    uploadedImage.src = userImageSrc;
+                    attemptToDraw();
                 };
                 reader.readAsDataURL(file);
                 fileNameDisplay.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
@@ -399,33 +387,32 @@
 
         // Long Press Listeners
         function startPress(e) {
-            if (!isReadyToDraw) return;
+            if (downloadBtn.disabled) return;
             e.preventDefault();
-            pressTimer = setTimeout(saveOrOpenImage, 800); // 800ms for long press
+            pressTimer = setTimeout(saveOrOpenImage, 800);
         }
         function cancelPress() { clearTimeout(pressTimer); }
         canvas.addEventListener('mousedown', startPress);
         canvas.addEventListener('mouseup', cancelPress);
         canvas.addEventListener('mouseleave', cancelPress);
-        canvas.addEventListener('touchstart', startPress, { passive: false });
+        canvas.addEventListener('touchstart', startPress);
         canvas.addEventListener('touchend', cancelPress);
         canvas.addEventListener('touchmove', cancelPress);
 
         // Adjustment Listeners
-        upBtn.addEventListener('click', () => { offsetY -= panStep; draw(); });
-        downBtn.addEventListener('click', () => { offsetY += panStep; draw(); });
-        leftBtn.addEventListener('click', () => { offsetX -= panStep; draw(); });
-        rightBtn.addEventListener('click', () => { offsetX += panStep; draw(); });
-        zoomInBtn.addEventListener('click', () => { scale += scaleStep; draw(); });
-        zoomOutBtn.addEventListener('click', () => { if (scale - scaleStep > 0.1) scale -= scaleStep; draw(); });
-        resetBtn.addEventListener('click', () => { scale = 1.0; offsetX = 0; offsetY = 0; draw(); });
+        upBtn.addEventListener('click', () => { offsetY -= panStep; drawCanvas(); });
+        downBtn.addEventListener('click', () => { offsetY += panStep; drawCanvas(); });
+        leftBtn.addEventListener('click', () => { offsetX -= panStep; drawCanvas(); });
+        rightBtn.addEventListener('click', () => { offsetX += panStep; drawCanvas(); });
+        zoomInBtn.addEventListener('click', () => { scale += scaleStep; drawCanvas(); });
+        zoomOutBtn.addEventListener('click', () => { if (scale - scaleStep > 0.1) scale -= scaleStep; drawCanvas(); });
+        resetBtn.addEventListener('click', () => { scale = 1.0; offsetX = 0; offsetY = 0; drawCanvas(); });
         
         copyCaptionBtn.addEventListener('click', () => {
             captionOutput.select();
             navigator.clipboard.writeText(captionOutput.value).then(() => {
-                const feedback = document.getElementById('copy-feedback');
-                feedback.textContent = 'Caption copied!';
-                setTimeout(() => { feedback.textContent = ''; }, 2000);
+                copyFeedback.textContent = 'Caption copied!';
+                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
             });
         });
 
