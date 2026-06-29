@@ -54,21 +54,6 @@ Creating your custom profile picture is simple. Follow these steps on the websit
 
 ---
 
-## 🛠️ Setup for GitHub Pages
-
-To deploy this project on your own GitHub Pages for free:
-
-1.  **Create a New Repository**: Go to your GitHub account and create a new public repository.
-2.  **Upload Files**: Upload all the files listed in the [File Structure](#-file-structure) section to the root of your new repository.
-3.  **Enable GitHub Pages**:
-    - Go to your repository's **Settings** tab.
-    - In the left sidebar, click on **Pages**.
-    - Under "Build and deployment", select the **Source** as "Deploy from a branch".
-    - Select the branch `main` (or `master`) and the folder `/root`. Click **Save**.
-4.  **Done!** Your site will be live in a few minutes at `https://<your-github-username>.github.io/<your-repository-name>/`.
-
----
-
 ## 💻 Technologies Used
 
 -   **HTML5**: For the core structure of the page.
