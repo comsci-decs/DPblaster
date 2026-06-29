@@ -1,85 +1,260 @@
-# DPblast! by DECS
+# DPblaster! by DECS
 
-<p align="center">
-  <img src="dpblast_logo.png" alt="DPblast! by DECS" width="400"/>
-</p>
+Official Profile Picture Creator for DECS Students
 
-<p align="center">
-  A dynamic, client-side web application for students of the DECS department at Laguna College of Business and Arts to create a custom profile picture for the Academic Year 2025-2026 kickoff event.
-</p>
+![DPblaster Banner](dpblast_logo.png)
 
-<p align="center">
-  <a href="https://comsci-decs.github.io/DPblaster/"><strong>View Live Demo »</strong></a>
-</p>
+## Overview
 
----
+DPblaster! is a responsive web application that allows students to generate official profile pictures for department-wide campaigns, semester launches, and organization activities.
 
-## 📸 Screenshot
+Users can:
 
-<p align="center">
-  <img src="https://i.imgur.com/eba989b8-dd0a-49da-a446-64642c87e5a1.jpg" alt="Application Screenshot" width="300"/>
-</p>
+- Upload a profile photo
+- Select a department frame
+- Adjust image position and zoom
+- Generate an official caption automatically
+- Download a high-resolution profile picture
+- Copy the generated caption with one click
 
----
-
-## ✨ Features
-
-This project is built with vanilla HTML, CSS, and JavaScript, leveraging Tailwind CSS for rapid UI development. It's a single-page application with no backend dependencies, making it perfect for free hosting on GitHub Pages.
-
-- **Dynamic Sticky Header**: A sleek, "glassmorphism" header that shrinks on scroll for a modern user experience.
-- **Frame Selection**: Users can choose between two custom frames (CpE or CS).
-- **Dynamic Caption Generation**: Automatically generates a detailed, pre-formatted caption based on user's name and section.
-- **Image Upload & Preview**: Allows users to upload a photo from their device and see a live preview.
-- **Center & Crop**: Automatically centers and crops non-square images to perfectly fit the 1:1 aspect ratio without stretching or distortion.
-- **Client-Side Image Processing**: Merges the uploaded image and the selected frame using the HTML Canvas API.
-- **One-Click Download**: Users can download the final framed picture as a `dpblast_profile.png` file.
-- **Copy-to-Clipboard**: Easily copy the generated caption with a single button click.
-- **Local Visitor Counter**: A simple widget in the footer that tracks page visits on a per-user basis using browser local storage.
-- **Fully Responsive**: Designed to work seamlessly on mobile, tablet, and desktop devices.
-- **Themed UI**: A modern, dark, "techy" theme with a red, orange, and white color palette.
+The application is optimized for both desktop and mobile devices and runs entirely in the browser without requiring a backend server.
 
 ---
 
-## 🚀 How to Use
+## Features
 
-Creating your custom profile picture is simple. Follow these steps on the website:
+### 🖼️ Profile Picture Generator
 
-1.  **Enter Your Name**: Type your full name into the first input field.
-2.  **Select Your Section**: Choose your correct section from the dropdown menu. This will automatically determine your course for the caption.
-3.  **Choose Your Frame**: Click on either the "CPE Frame" or "CS Frame" to select the design for your course.
-4.  **Upload Your Picture**: Click the "Upload Your Picture" button and select a photo from your device.
-5.  **Preview**: A live preview of your final image will appear.
-6.  **Download Image**: Once you are happy with the result, click the "Download Image" button.
-7.  **Copy Caption**: Click the "Copy Caption" button to copy the official caption to your clipboard, ready to be pasted on social media.
+- Upload custom profile images
+- Live preview rendering
+- High-resolution 1080×1080 output
+- Instant frame application
+- Mobile-friendly workflow
+
+### 🎨 Frame Selection
+
+- Computer Engineering (CpE) Frame
+- Computer Science (CS) Frame
+- Visual frame previews
+- Active frame highlighting
+
+### ⚙️ Image Adjustment Tools
+
+- Zoom In / Zoom Out
+- Move Up
+- Move Down
+- Move Left
+- Move Right
+- Reset Position
+
+### ✍️ Caption Generator
+
+Automatically generates an official DECS DP Blast caption using:
+
+- Student Name
+- Course Section
+
+Includes:
+
+- Department branding
+- Welcome message
+- Semester campaign message
+- Official hashtags
+
+### ⬇️ Download System
+
+- One-click download
+- Mobile long-press save support
+- PNG output format
+
+### 📱 User Experience
+
+- Modern glassmorphism interface
+- Responsive design
+- Animated loading screen
+- Sticky navigation header
+- Browser compatibility detection
+- Facebook/Messenger browser warning
+
+### 👥 Visitor Tracking
+
+- Local visitor counter
+- Stored using LocalStorage
+- No external analytics required
 
 ---
 
-## 💻 Technologies Used
+## Technology Stack
 
--   **HTML5**: For the core structure of the page.
--   **CSS3**: For custom styling and animations.
--   **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
--   **JavaScript (ES6+)**: For all the application logic, including DOM manipulation, canvas image processing, and event handling.
+### Frontend
+
+- HTML5
+- CSS3
+- Vanilla JavaScript
+
+### Browser APIs
+
+- Canvas API
+- Clipboard API
+- LocalStorage API
+- File API
+- Object URL API
+
+### Design Features
+
+- Responsive Layout
+- Glassmorphism UI
+- Mobile-First Design
+- CSS Animations
+- Accessibility Enhancements
 
 ---
 
-## 👨‍💻 Credits
+## Project Structure
 
-This project was designed and produced by:
--   **Ickoh Gecolea** (PRO-CpE)
--   **Michael Ordenes** (PRO-CS)
+```text
+DPblaster/
+│
+├── index.html
+│
+├── dpblast_logo.png
+├── decs.png
+├── decs_logo_small.png
+├── acoes.png
+├── ccss.png
+│
+├── cpe_frame.png
+├── cs_frame.png
+│
+└── README.md
+```
 
 ---
 
-## 🌐 Follow Us
+## Required Assets
 
-Stay updated with the latest from our student organizations on Facebook:
-
--   <a href="https://www.facebook.com/acoeslcba">**Association of Computer Engineering Students (ACOES)**</a>
--   <a href="https://www.facebook.com/ccsslcba">**Council of Computer Science Students (CCSS)**</a>
+| File | Purpose |
+|--------|----------|
+| dpblast_logo.png | Main application logo |
+| decs.png | DECS logo |
+| decs_logo_small.png | Floating badge logo |
+| acoes.png | ACOES logo |
+| ccss.png | CCSS logo |
+| cpe_frame.png | Computer Engineering frame |
+| cs_frame.png | Computer Science frame |
 
 ---
 
-## 📄 License
+## Installation
 
-This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
+### Clone the Repository
+
+```bash
+git clone https://github.com/comsci-decs/DPblaster.git
+cd DPblaster
+```
+
+### Run Locally
+
+Open:
+
+```text
+index.html
+```
+
+or use a local web server:
+
+```bash
+python -m http.server 8000
+```
+
+Then visit:
+
+```text
+http://localhost:8000
+```
+
+---
+
+## Usage
+
+### Step 1
+Enter your full name.
+
+### Step 2
+Select your course and section.
+
+### Step 3
+Choose a profile frame.
+
+### Step 4
+Upload your profile photo.
+
+### Step 5
+Adjust image placement and zoom if needed.
+
+### Step 6
+Download your generated profile picture.
+
+### Step 7
+Copy the generated caption and post it.
+
+---
+
+## Browser Support
+
+### Recommended Browsers
+
+- Google Chrome
+- Microsoft Edge
+- Safari
+- Opera
+
+### Limited Support
+
+The application will display a warning when opened inside:
+
+- Facebook Browser
+- Messenger Browser
+
+For best results, open the application in a standalone browser.
+
+---
+
+## Privacy
+
+DPblaster processes all images locally in the user's browser.
+
+- No photos are uploaded to a server.
+- No personal information is collected.
+- No account is required.
+- Visitor counts are stored locally using browser LocalStorage.
+
+---
+
+## Credits
+
+### Development
+
+**Michael Ordenes**
+
+### Graphics
+
+- Ickoh Gecolea
+- Angelic Napa
+
+### Organizations
+
+- Department of Engineering and Computer Studies (DECS)
+- Association of Computer Engineering Students (ACOES)
+- Council of Computer Science Students (CCSS)
+
+---
+
+## License
+
+This project is intended for educational and organizational use.
+
+All organization logos, branding materials, and campaign assets remain the property of their respective organizations.
+
+© DECS • ACOES • CCSS • All Rights Reserved
