@@ -3,470 +3,1426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPblaster!</title>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>DPblaster! by DECS — Official Profile Picture Creator</title>
+    <meta name="description" content="Build your official DECS profile picture in one place. A responsive creator for mobile and desktop with live preview, caption generation, and one-click download.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        /* =============================================
+           DESIGN TOKENS & BASE RESET
+        ============================================= */
+        :root {
+            --red-deep:    #6b0608;
+            --red-mid:     #9a0200;
+            --red-bright:  #c0392b;
+            --orange:      #f97316;
+            --orange-dark: #ea6a0a;
+            --yellow:      #fbbf24;
+            --yellow-soft: #fde68a;
+            --white:       #ffffff;
+            --gray-50:     #f9fafb;
+            --gray-100:    #f3f4f6;
+            --gray-200:    #e5e7eb;
+            --gray-300:    #d1d5db;
+            --gray-400:    #9ca3af;
+            --gray-500:    #6b7280;
+            --gray-700:    #374151;
+            --gray-900:    #111827;
+
+            --glass-bg:    rgba(8, 4, 4, 0.45);
+            --glass-border:rgba(255,255,255,0.10);
+            --glass-blur:  blur(20px);
+
+            --radius-sm:   0.5rem;
+            --radius-md:   0.75rem;
+            --radius-lg:   1rem;
+            --radius-xl:   1.5rem;
+            --radius-2xl:  2rem;
+
+            --shadow-glow-orange: 0 0 24px rgba(249,115,22,0.25);
+            --shadow-card: 0 8px 40px rgba(0,0,0,0.50);
+            --transition:  all 0.25s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #7f0a10;
+            background-color: var(--red-deep);
             background-image:
-                radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 32%),
-                radial-gradient(circle at top right, rgba(239, 68, 68, 0.18), transparent 28%),
-                linear-gradient(135deg, #7f0a10 0%, #4f0206 100%);
+                radial-gradient(ellipse 80% 60% at 10% 0%, rgba(249,115,22,0.22) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 50% at 90% 10%, rgba(192,57,43,0.28) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 80% at 50% 100%, rgba(0,0,0,0.50) 0%, transparent 70%),
+                linear-gradient(160deg, #7f0a10 0%, #3d0106 60%, #1a0002 100%);
+            min-height: 100vh;
+            color: var(--gray-100);
+            -webkit-font-smoothing: antialiased;
         }
-        
+
+        /* =============================================
+           LOADING SCREEN
+        ============================================= */
         #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #9a0200; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 100;
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(160deg, #8a0a0e 0%, #3d0106 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
             transition: opacity 0.5s ease-out;
         }
-        #loading-logo { max-width: 80%; width: 400px; margin-bottom: 2.5rem; }
+
+        #loading-logo {
+            max-width: 80%;
+            width: 360px;
+            margin-bottom: 2.5rem;
+            filter: drop-shadow(0 4px 24px rgba(0,0,0,0.5));
+        }
 
         #loading-screen .loader {
-          width: 40px; height: 30px; --c:no-repeat linear-gradient(#ffffff 0 0);
-          background: var(--c) 0 100%/8px 30px, var(--c) 50% 100%/8px 20px, var(--c) 100% 100%/8px 10px;
-          position: relative; clip-path: inset(-100% 0);
+            width: 44px; height: 32px;
+            --c: no-repeat linear-gradient(#ffffff 0 0);
+            background: var(--c) 0 100%/9px 32px, var(--c) 50% 100%/9px 21px, var(--c) 100% 100%/9px 11px;
+            position: relative;
+            clip-path: inset(-100% 0);
         }
-        #loading-screen .loader:before{
-          content: ""; position: absolute; width: 8px; height: 8px; border-radius: 50%;
-          background: #fff; left: -16px; top: 0;
-          animation: l5-1 2s linear infinite, l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+        #loading-screen .loader::before {
+            content: "";
+            position: absolute;
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: #fff;
+            left: -18px; top: 0;
+            animation: l5-1 2s linear infinite, l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
         }
-        @keyframes l5-1 { 0% {left:-16px;transform:translateY(-8px)} 100% {left:calc(100% + 8px);transform:translateY(22px)} }
-        @keyframes l5-2 { 100% {top:-0.1px} }
-        
-        .preview-loader {
-            width: 40px; height: 40px; position: relative;
-            --c:no-repeat linear-gradient(#F97316 0 0);
-            background: var(--c) center/100% 10px, var(--c) center/10px 100%;
-        }
-        .preview-loader:before {
-            content:''; position: absolute; inset: 0;
-            background: var(--c) 0 0, var(--c) 100% 0, var(--c) 0 100%, var(--c) 100% 100%;
-            background-size: 15.5px 15.5px;
-            animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
-        }
-        @keyframes l16 { 33% {inset:-10px;transform:rotate(0deg)} 66% {inset:-10px;transform:rotate(90deg)} 100% {inset:0;transform:rotate(90deg)} }
-        
-        #main-content, #browser-blocker { display: none; }
-        canvas { max-width: 100%; height: auto; border-radius: 0.5rem; cursor: pointer; }
-        .custom-transition { transition: all 0.3s ease-in-out; }
-        .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #F97316; }
-        input[type="file"] { display: none; }
-        .glass-container { background: rgba(6, 6, 6, 0.28); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        @keyframes l5-1 { 0% { left:-18px; transform:translateY(-8px) } 100% { left:calc(100% + 9px); transform:translateY(23px) } }
+        @keyframes l5-2 { 100% { top:-0.1px } }
 
-        .section-accent {
+        /* =============================================
+           BROWSER BLOCKER
+        ============================================= */
+        #browser-blocker {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            padding: 1rem;
+        }
+
+        #main-content { display: none; }
+
+        /* =============================================
+           GLASS UTILITY
+        ============================================= */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* =============================================
+           HEADER
+        ============================================= */
+        #app-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 0.875rem 1.5rem;
+            transition: var(--transition);
+        }
+        #app-header.scrolled {
+            background: rgba(10,2,2,0.70);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0 2px 24px rgba(0,0,0,0.4);
+        }
+        #app-header .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #app-logo {
+            max-height: 48px;
+            width: auto;
+            transition: max-height 0.3s ease;
+            filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5));
+        }
+        #app-header.scrolled #app-logo { max-height: 30px; }
+        #text-header { display: none; text-align: center; }
+        #text-header h1 { font-size: 2rem; font-weight: 900; color: var(--white); }
+        #text-header p  { font-size: 0.875rem; color: var(--gray-300); }
+
+        /* =============================================
+           PAGE WRAPPER
+        ============================================= */
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 96px 1rem 3rem;
+        }
+
+        /* =============================================
+           HERO SECTION
+        ============================================= */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 2rem 1.5rem 2rem;
+            border-radius: var(--radius-2xl);
+            margin-bottom: 1.75rem;
             position: relative;
             overflow: hidden;
         }
 
-        .section-accent::before {
+        .hero::before {
             content: '';
             position: absolute;
-            top: 0.75rem;
-            left: 0.75rem;
-            right: 0.75rem;
-            height: 2px;
-            border-radius: 999px;
-            z-index: 0;
-            pointer-events: none;
-            background: linear-gradient(90deg, #f97316, #fb7185, #f97316);
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--orange), var(--yellow), var(--orange));
+            border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
         }
 
-        .section-accent > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .icon-badge {
+        .hero-text .eyebrow {
             display: inline-flex;
             align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--orange);
+            background: rgba(249,115,22,0.12);
+            border: 1px solid rgba(249,115,22,0.3);
+            border-radius: 999px;
+            padding: 0.3rem 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(1.6rem, 5vw, 3rem);
+            font-weight: 900;
+            color: var(--white);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(90deg, var(--orange), var(--yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            margin-top: 0.85rem;
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--gray-300);
+            max-width: 560px;
+        }
+
+        .hero-logos {
+            display: flex;
+            align-items: center;
             justify-content: center;
-            width: 2rem;
-            height: 2rem;
+            gap: 0.75rem;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-xl);
+            padding: 1rem 1.25rem;
             flex-shrink: 0;
         }
 
-        .control-btn:focus-visible {
-            outline: 2px solid #f97316;
-            outline-offset: 2px;
+        .hero-logo-link {
+            display: block;
+            border-radius: var(--radius-md);
+            outline: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .hero-logo-link:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .hero-logo-link:focus-visible { box-shadow: 0 0 0 3px var(--orange); }
+
+        .hero-logo-img {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .hero-logo-img.center {
+            border: 2px solid rgba(251,191,36,0.5);
         }
 
-        #app-header { transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out; }
-        #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 0, 0, 0.4); }
-        #app-logo { transition: max-height 0.3s ease-in-out; max-height: 50px; width: auto; }
-        #app-header.scrolled #app-logo { max-height: 30px; }
-        
-        /* Utility class to prevent text selection */
+        /* =============================================
+           MAIN GRID LAYOUT
+        ============================================= */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        /* =============================================
+           CARDS
+        ============================================= */
+        .card {
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 1.5rem; right: 1.5rem;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(249,115,22,0.7), transparent);
+            pointer-events: none;
+        }
+
+        .card-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--orange);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* =============================================
+           FORM ELEMENTS
+        ============================================= */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-200);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.01em;
+        }
+
+        .form-label .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.35rem;
+            height: 1.35rem;
+            border-radius: 50%;
+            background: var(--orange);
+            color: var(--white);
+            font-size: 0.65rem;
+            font-weight: 800;
+            margin-right: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        .input-wrap {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: rgba(255,255,255,0.04);
+        }
+        .input-wrap:focus-within {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.18);
+        }
+
+        .input-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.75rem;
+            background: rgba(249,115,22,0.1);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .form-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--white);
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+        .form-input::placeholder { color: var(--gray-500); }
+
+        .form-select {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--white);
+            border: none;
+            outline: none;
+            color: var(--gray-900);
+            font-size: 0.9rem;
+            font-family: inherit;
+            appearance: auto;
+            -webkit-appearance: menulist;
+            -moz-appearance: menulist;
+            cursor: pointer;
+        }
+        .form-select option { color: var(--gray-900); background: var(--white); }
+
+        /* =============================================
+           FRAME SELECTOR
+        ============================================= */
+        .frame-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .frame-btn {
+            all: unset;
+            cursor: pointer;
+            display: block;
+            border-radius: var(--radius-md);
+            border: 2px solid rgba(255,255,255,0.10);
+            background: rgba(0,0,0,0.25);
+            padding: 0.35rem;
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+        .frame-btn:hover {
+            border-color: rgba(249,115,22,0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+        }
+        .frame-btn:focus-visible {
+            outline: 2px solid var(--orange);
+            outline-offset: 2px;
+        }
+        .frame-btn.active {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.25), var(--shadow-glow-orange);
+        }
+
+        .frame-thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: 0.35rem;
+            background: rgba(0,0,0,0.2);
+            display: block;
+            transition: transform 0.2s ease;
+        }
+        .frame-btn.active .frame-thumb { transform: scale(0.97); }
+
+        .frame-label {
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gray-300);
+            margin-top: 0.4rem;
+            letter-spacing: 0.05em;
+        }
+        .frame-btn.active .frame-label { color: var(--orange); }
+
+        /* =============================================
+           UPLOAD BUTTON
+        ============================================= */
+        input[type="file"] { display: none; }
+
+        .upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 16px rgba(153,27,27,0.4);
+            user-select: none;
+        }
+        .upload-label:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(153,27,27,0.5);
+        }
+        .upload-label:active { transform: translateY(0); }
+
+        .file-name {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--gray-400);
+            margin-top: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* =============================================
+           PREVIEW SECTION
+        ============================================= */
+        .preview-area {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-lg);
+            background: rgba(0,0,0,0.30);
+            border: 1.5px solid rgba(255,255,255,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: none;
+        }
+        #canvas.visible { display: block; }
+
+        #canvas-placeholder {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        #canvas-placeholder .placeholder-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.75rem;
+            opacity: 0.4;
+        }
+
+        .preview-loader {
+            width: 44px; height: 44px;
+            position: relative;
+            display: none;
+            --c: no-repeat linear-gradient(var(--orange) 0 0);
+            background: var(--c) center/100% 10px, var(--c) center/10px 100%;
+        }
+        .preview-loader::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--c) 0 0, var(--c) 100% 0, var(--c) 0 100%, var(--c) 100% 100%;
+            background-size: 16px 16px;
+            animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
+        }
+        @keyframes l16 { 33%{inset:-10px;transform:rotate(0deg)} 66%{inset:-10px;transform:rotate(90deg)} 100%{inset:0;transform:rotate(90deg)} }
+
+        /* =============================================
+           ADJUSTMENT CONTROLS
+        ============================================= */
+        .adjust-panel {
+            display: none;
+            margin-top: 1.25rem;
+            padding: 1rem 1.1rem;
+            border-radius: var(--radius-lg);
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .adjust-panel.visible { display: block; }
+
+        .adjust-title {
+            text-align: center;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--yellow-soft);
+            margin-bottom: 0.85rem;
+        }
+        .adjust-subtitle {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--gray-400);
+            margin-top: 0.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .adjust-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .ctrl-group {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+        }
+
+        .ctrl-label {
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gray-300);
+            margin-bottom: 0.6rem;
+        }
+
+        .ctrl-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .ctrl-dpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.35rem;
+            justify-items: center;
+        }
+
+        .ctrl-btn {
+            all: unset;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 0.6rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 700;
+            transition: background 0.15s ease, transform 0.1s ease;
+            user-select: none;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+        .ctrl-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+        .ctrl-btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+        .ctrl-btn.reset {
+            background: rgba(220,38,38,0.60);
+            border-color: rgba(220,38,38,0.3);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            font-weight: 800;
+        }
+        .ctrl-btn.reset:hover { background: rgba(220,38,38,0.80); }
+
+        /* =============================================
+           BUTTONS
+        ============================================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: var(--white);
+            box-shadow: 0 4px 20px rgba(249,115,22,0.30);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #fb923c, var(--orange));
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(249,115,22,0.40);
+        }
+        .btn-primary:active:not(:disabled) { transform: translateY(0); }
+        .btn-primary:disabled {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-secondary {
+            background: rgba(249,115,22,0.12);
+            color: var(--orange);
+            border: 1.5px solid rgba(249,115,22,0.35);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(249,115,22,0.20);
+            border-color: rgba(249,115,22,0.6);
+        }
+        .btn-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 0.35rem;
+            background: rgba(255,255,255,0.12);
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+
+        /* =============================================
+           CAPTION OUTPUT
+        ============================================= */
+        .caption-box {
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            background: rgba(0,0,0,0.25);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            color: var(--gray-100);
+            font-size: 0.83rem;
+            line-height: 1.75;
+            white-space: pre-wrap;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(249,115,22,0.4) transparent;
+        }
+        .caption-box::-webkit-scrollbar { width: 4px; }
+        .caption-box::-webkit-scrollbar-track { background: transparent; }
+        .caption-box::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.4); border-radius: 4px; }
+
+        /* =============================================
+           FEEDBACK MESSAGES
+        ============================================= */
+        .feedback-msg {
+            height: 1.25rem;
+            text-align: center;
+            font-size: 0.78rem;
+            margin-top: 0.4rem;
+        }
+        .feedback-success { color: #4ade80; }
+        .feedback-error   { color: #f87171; }
+
+        .tip-text {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-bottom: 0.6rem;
+            line-height: 1.5;
+        }
+
+        /* =============================================
+           DIVIDER UTILITY
+        ============================================= */
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+            margin: 1.25rem 0;
+        }
+
+        /* =============================================
+           FOOTER
+        ============================================= */
+        footer {
+            margin-top: 3rem;
+            background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, #1a0002 30%);
+            border-top: 3px solid var(--yellow);
+            padding: 3rem 1.5rem 2rem;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .footer-eyebrow {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--yellow);
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-heading {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-text {
+            font-size: 0.83rem;
+            line-height: 1.75;
+            color: var(--gray-300);
+            max-width: 420px;
+        }
+
+        .footer-logos {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 1.25rem;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(251,191,36,0.2);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem 1rem;
+            width: fit-content;
+        }
+        .footer-logo-img {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+        a:hover > .footer-logo-img { transform: scale(1.08); }
+        .footer-logo-img.center-logo { border: 2px solid rgba(251,191,36,0.5); }
+
+        .footer-col-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.85rem;
+        }
+
+        .footer-links { display: flex; flex-direction: column; gap: 0.6rem; }
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.83rem;
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer-link:hover { color: var(--white); }
+        .footer-link-icon {
+            width: 1.6rem; height: 1.6rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.35rem;
+            background: rgba(255,255,255,0.08);
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .footer-notice {
+            margin-top: 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(251,191,36,0.2);
+            background: rgba(0,0,0,0.2);
+            padding: 0.85rem 1rem;
+        }
+        .footer-notice-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--yellow);
+            margin-bottom: 0.5rem;
+        }
+        .footer-notice p {
+            font-size: 0.78rem;
+            line-height: 1.65;
+            color: var(--gray-300);
+            margin-bottom: 0.35rem;
+        }
+        .footer-notice code {
+            background: rgba(255,255,255,0.10);
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.78rem;
+            color: var(--gray-200);
+        }
+
+        .visitor-box {
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(251,191,36,0.25);
+            background: rgba(0,0,0,0.25);
+            padding: 1.1rem 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .visitor-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--yellow);
+        }
+        #visitor-count {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--yellow);
+            line-height: 1.1;
+            margin: 0.4rem 0;
+            letter-spacing: -0.02em;
+        }
+        .visitor-note {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        .footer-meta { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.65rem; line-height: 1.65; }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2rem auto 0;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(251,191,36,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            text-align: center;
+            font-size: 0.73rem;
+            color: var(--gray-400);
+        }
+
+        /* =============================================
+           FLOATING BADGE
+        ============================================= */
+        #floating-badge {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 49;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+        }
+        #floating-badge:hover { transform: scale(1.05); }
+        #floating-badge img { display: block; width: 52px; height: 52px; object-fit: cover; }
+
+        /* =============================================
+           NO-SELECT UTILITY
+        ============================================= */
         .no-select {
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none;   /* Safari */
-            -khtml-user-select: none;    /* Konqueror HTML */
-            -moz-user-select: none;      /* Old versions of Firefox */
-            -ms-user-select: none;       /* Internet Explorer/Edge */
-            user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* =============================================
+           RESPONSIVE — TABLET (≥ 640px)
+        ============================================= */
+        @media (min-width: 640px) {
+            .page-wrapper { padding: 96px 1.5rem 3rem; }
+            .hero { padding: 2.25rem 2rem; }
+            .hero-logo-img { width: 80px; height: 80px; }
+            .card { padding: 2rem; }
+            .adjust-grid { grid-template-columns: 0.9fr 1.1fr; }
+        }
+
+        /* =============================================
+           RESPONSIVE — DESKTOP (≥ 1024px)
+        ============================================= */
+        @media (min-width: 1024px) {
+            .page-wrapper { padding: 100px 2rem 4rem; }
+
+            .hero {
+                grid-template-columns: 1fr auto;
+                gap: 2.5rem;
+                padding: 2.5rem 2.5rem;
+            }
+
+            .hero-logo-img { width: 88px; height: 88px; }
+            .hero-logos { gap: 1rem; padding: 1.25rem 1.5rem; }
+
+            .main-grid {
+                grid-template-columns: 1fr 1.05fr;
+                gap: 1.75rem;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1.1fr 0.9fr 1fr;
+                gap: 3rem;
+                align-items: start;
+            }
+
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
     </style>
 </head>
-<body class="text-gray-200">
+<body>
 
-    <!-- Loading Screen -->
+    <!-- =============================================
+         LOADING SCREEN
+    ============================================= -->
     <div id="loading-screen">
-        <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
+        <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" fetchpriority="high" decoding="async"
+             onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
         <div class="loader"></div>
     </div>
-    
-    <!-- Browser Blocker Screen -->
-    <div id="browser-blocker" class="fixed inset-0 z-[200] flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
-        <div class="glass-container max-w-sm w-full p-6 rounded-2xl text-center shadow-xl">
-            <h2 class="text-2xl font-bold text-white mb-3">Unsupported Browser</h2>
-            <p class="text-gray-300 mb-6">This page may not work correctly in the Facebook or Messenger browser. For the best experience, please open it in a standard browser like Chrome, Safari, or Opera.</p>
-            <p class="text-gray-400 text-sm mb-2">1. Tap the three dots (&#8942;) in the corner.</p>
-            <p class="text-gray-400 text-sm mb-6">2. Select "Open in Browser".</p>
-            <button id="copy-link-btn" class="w-full bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition">Copy Page Link</button>
-            <div id="copy-link-feedback" class="text-sm text-green-400 mt-2 h-5"></div>
+
+    <!-- =============================================
+         BROWSER BLOCKER
+    ============================================= -->
+    <div id="browser-blocker">
+        <div class="glass card" style="max-width:400px;width:100%;text-align:center;">
+            <h2 style="font-size:1.5rem;font-weight:800;color:var(--white);margin-bottom:0.75rem;">Unsupported Browser</h2>
+            <p style="font-size:0.88rem;color:var(--gray-300);line-height:1.7;margin-bottom:1.5rem;">This page may not work correctly in the Facebook or Messenger browser. For the best experience, please open it in Chrome, Safari, or Opera.</p>
+            <p style="font-size:0.8rem;color:var(--gray-400);margin-bottom:0.35rem;">1. Tap the three dots (⋮) in the corner.</p>
+            <p style="font-size:0.8rem;color:var(--gray-400);margin-bottom:1.5rem;">2. Select <strong style="color:var(--white);">Open in Browser</strong>.</p>
+            <button id="copy-link-btn" class="btn btn-primary" style="width:100%;">
+                <span class="btn-icon">⬆</span> Copy Page Link
+            </button>
+            <div id="copy-link-feedback" class="feedback-msg feedback-success"></div>
         </div>
     </div>
 
-    <!-- Main Website Content -->
+    <!-- =============================================
+         MAIN CONTENT
+    ============================================= -->
     <div id="main-content">
-        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4">
-            <div class="container mx-auto flex justify-center items-center">
-                <img id="app-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.style.display='none'; document.getElementById('text-header').style.display='block';">
-                <div id="text-header" style="display:none;" class="text-center">
-                     <h1 class="text-4xl md:text-5xl font-bold text-white">DPblaster!</h1>
-                     <p class="text-lg text-gray-300">by DECS</p>
+
+        <!-- Header -->
+        <header id="app-header">
+            <div class="header-inner">
+                <img id="app-logo" src="dpblast_logo.png" alt="DPblast Logo"
+                     onerror="this.onerror=null;this.style.display='none';document.getElementById('text-header').style.display='block';">
+                <div id="text-header">
+                    <h1>DPblaster!</h1>
+                    <p>by DECS</p>
                 </div>
             </div>
         </header>
 
-        <div class="container mx-auto px-4 py-8" style="padding-top: 120px;"> 
-            <section class="section-accent glass-container max-w-6xl mx-auto mb-6 rounded-2xl border border-white/10 bg-black/25 p-6 md:p-8 shadow-2xl">
-                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div class="max-w-2xl">
-                        <h1 class="mt-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl">Build your official DECS profile picture in one place.</h1>
-                        <p class="mt-4 max-w-xl text-sm leading-6 text-gray-300 sm:text-base">A responsive creator for mobile and desktop with live preview, caption generation, and one-click download.</p>
-                    </div>
-                    <div class="mt-5 grid grid-cols-3 items-center justify-items-center gap-1 rounded-xl bg-black/20 p-2 sm:gap-2 md:gap-3 md:p-3">
-                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
-                            <img src="acoes.png" alt="ACOES Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
-                        </a>
-                        <img src="decs.png" alt="DECS Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
-                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
-                            <img src="ccss.png" alt="CCSS Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
-                        </a>
-                    </div>
+        <div class="page-wrapper">
+
+            <!-- Hero -->
+            <section class="glass hero" aria-label="Introduction">
+                <div class="hero-text">
+                    <span class="eyebrow">✦ Official Profile Picture Creator</span>
+                    <h1>Build your official<br><span>DECS profile picture</span><br>in one place.</h1>
+                    <p>A responsive creator for mobile and desktop with live preview, caption generation, and one-click download.</p>
+                </div>
+                <div class="hero-logos" aria-label="Affiliated organizations">
+                    <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="hero-logo-link" title="Follow ACOES">
+                        <img src="acoes.png" alt="ACOES Logo" class="hero-logo-img" decoding="async"
+                             onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
+                    </a>
+                    <img src="decs.png" alt="DECS Logo" class="hero-logo-img center" decoding="async"
+                         onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
+                    <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="hero-logo-link" title="Follow CCSS">
+                        <img src="ccss.png" alt="CCSS Logo" class="hero-logo-img" decoding="async"
+                             onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
+                    </a>
                 </div>
             </section>
 
-            <div class="grid gap-6 lg:grid-cols-[1fr_1.05fr] items-start">
-                <section class="section-accent glass-container rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl">
-                    <div class="space-y-6">
-                        <div>
-                            <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2 no-select">1. Enter Your Name</label>
-                            <div class="relative">
-                                <span class="icon-badge absolute left-3 top-1/2 -translate-y-1/2 rounded-md bg-orange-500/15 text-orange-200">👤</span>
-                                <input type="text" id="name-input" class="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
-                            </div>
+            <!-- Main Grid: Controls + Preview -->
+            <div class="main-grid">
+
+                <!-- LEFT: Controls -->
+                <section class="glass card" aria-label="Profile creator controls">
+                    <p class="card-title">Creator Controls</p>
+
+                    <!-- Step 1: Name -->
+                    <div class="form-group">
+                        <label for="name-input" class="form-label no-select">
+                            <span class="step-num">1</span> Enter Your Name
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">👤</span>
+                            <input type="text" id="name-input" class="form-input"
+                                   placeholder="e.g., Juan Dela Cruz" autocomplete="name">
                         </div>
-                        <div>
-                            <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2 no-select">2. Select Your Section</label>
-                            <div class="relative">
-                                <span class="icon-badge pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 rounded-md bg-orange-500/15 text-orange-200">▾</span>
-                                <select id="section-select" class="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
-                                <option value="" disabled selected>Choose your course & section...</option>
-                                <option value="I-CpE1">I-CpE1</option> <option value="II-CpE1">II-CpE1</option> <option value="III-CpE1">III-CpE1</option> <option value="IV-CpE1">IV-CpE1</option>
-                                <option value="I-CS1">I-CS1</option> <option value="II-CS1">II-CS1</option> <option value="III-CS1">III-CS1</option> <option value="IV-CS1">IV-CS1</option>
-                                </select>
-                            </div>
+                    </div>
+
+                    <!-- Step 2: Section -->
+                    <div class="form-group">
+                        <label for="section-select" class="form-label no-select">
+                            <span class="step-num">2</span> Select Your Section
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">▾</span>
+                            <select id="section-select" class="form-select">
+                                <option value="" disabled selected>Choose your course &amp; section…</option>
+                                <option value="I-CpE1">I-CpE1</option>
+                                <option value="II-CpE1">II-CpE1</option>
+                                <option value="III-CpE1">III-CpE1</option>
+                                <option value="IV-CpE1">IV-CpE1</option>
+                                <option value="I-CS1">I-CS1</option>
+                                <option value="II-CS1">II-CS1</option>
+                                <option value="III-CS1">III-CS1</option>
+                                <option value="IV-CS1">IV-CS1</option>
+                            </select>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">3. Choose Your Frame</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button class="frame-btn" data-frame-src="cpe_frame.png"><img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition shadow-lg shadow-black/20" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';"></button>
-                                <button class="frame-btn" data-frame-src="cs_frame.png"><img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition shadow-lg shadow-black/20" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';"></button>
-                            </div>
+                    </div>
+
+                    <!-- Step 3: Frame -->
+                    <div class="form-group">
+                        <p class="form-label no-select">
+                            <span class="step-num">3</span> Choose Your Frame
+                        </p>
+                        <div class="frame-grid">
+                            <button class="frame-btn" id="frame-btn-cpe" data-frame-src="cpe_frame.png" aria-pressed="false" aria-label="Select CPE frame">
+                                <img src="cpe_frame.png" alt="CPE Frame" class="frame-thumb" decoding="async"
+                                     onerror="this.onerror=null;this.src=framePlaceholderSvg('CPE Frame');">
+                                <div class="frame-label">CpE Frame</div>
+                            </button>
+                            <button class="frame-btn" id="frame-btn-cs" data-frame-src="cs_frame.png" aria-pressed="false" aria-label="Select CS frame">
+                                <img src="cs_frame.png" alt="CS Frame" class="frame-thumb" decoding="async"
+                                     onerror="this.onerror=null;this.src=framePlaceholderSvg('CS Frame');">
+                                <div class="frame-label">CS Frame</div>
+                            </button>
                         </div>
-                        <div>
-                            <label for="image-upload-btn" class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-center font-semibold text-white shadow-lg shadow-red-500/20 transition hover:bg-red-700 no-select">
-                                <span class="icon-badge rounded-md bg-white/10">⬆</span>
-                                4. Upload Your Picture
-                            </label>
-                            <input type="file" id="image-upload-btn" accept="image/*">
-                            <p id="file-name" class="mt-2 text-center text-sm text-gray-400">No file chosen</p>
-                        </div>
+                    </div>
+
+                    <!-- Step 4: Upload -->
+                    <div class="form-group">
+                        <p class="form-label no-select">
+                            <span class="step-num">4</span> Upload Your Picture
+                        </p>
+                        <label for="image-upload-btn" class="upload-label no-select">
+                            <span class="btn-icon">⬆</span> Choose Photo
+                        </label>
+                        <input type="file" id="image-upload-btn" accept="image/*">
+                        <p id="file-name" class="file-name">No file chosen</p>
                     </div>
                 </section>
 
-                <main class="section-accent glass-container rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl">
+                <!-- RIGHT: Preview & Download -->
+                <main class="glass card" aria-label="Preview and download">
+                    <p class="card-title">Preview &amp; Download</p>
+
+                    <!-- Step 5: Preview -->
+                    <div style="margin-bottom:0;">
+                        <p class="form-label no-select" style="margin-bottom:0.6rem;">
+                            <span class="step-num">5</span> Preview
+                        </p>
+                        <div class="preview-area">
+                            <div id="preview-loader" class="preview-loader"></div>
+                            <canvas id="canvas" width="1080" height="1080"></canvas>
+                            <span id="canvas-placeholder">
+                                <span class="placeholder-icon" aria-hidden="true">🖼️</span>
+                                Your image will appear here after selecting a frame and uploading a photo.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Adjustment Controls -->
+                    <div id="adjustment-controls" class="adjust-panel">
+                        <p class="adjust-title">⚙ Adjust Picture</p>
+                        <p class="adjust-subtitle">Fine-tune position and zoom before downloading.</p>
+                        <div class="adjust-grid">
+                            <!-- Zoom -->
+                            <div class="ctrl-group">
+                                <p class="ctrl-label">Zoom</p>
+                                <div class="ctrl-row">
+                                    <button id="zoom-in-btn"  class="ctrl-btn" aria-label="Zoom in">+</button>
+                                    <button id="zoom-out-btn" class="ctrl-btn" aria-label="Zoom out">−</button>
+                                </div>
+                            </div>
+                            <!-- D-pad -->
+                            <div class="ctrl-group">
+                                <p class="ctrl-label">Move</p>
+                                <div class="ctrl-dpad">
+                                    <div></div>
+                                    <button id="up-btn"    class="ctrl-btn" aria-label="Move up">↑</button>
+                                    <div></div>
+                                    <button id="left-btn"  class="ctrl-btn" aria-label="Move left">←</button>
+                                    <button id="reset-btn" class="ctrl-btn reset" aria-label="Reset position">RST</button>
+                                    <button id="right-btn" class="ctrl-btn" aria-label="Move right">→</button>
+                                    <div></div>
+                                    <button id="down-btn"  class="ctrl-btn" aria-label="Move down">↓</button>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Download -->
+                    <div style="margin-bottom:1.25rem;">
+                        <p class="tip-text">💡 Tip: Long-press the preview or tap the button below to save!</p>
+                        <button id="download-btn" class="btn btn-primary" disabled>
+                            <span class="btn-icon">⬇</span> Download Photo
+                        </button>
+                        <p id="download-error" class="feedback-msg feedback-error"></p>
+                    </div>
+
+                    <!-- Caption -->
                     <div>
-                        <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">5. Preview</h3>
-                        <div class="preview-container flex aspect-square items-center justify-center rounded-lg bg-black/20 ring-1 ring-white/5">
-                           <div id="preview-loader" class="preview-loader" style="display: none;"></div>
-                           <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
-                           <span id="canvas-placeholder" class="px-4 text-center text-gray-500">Your image will appear here</span>
-                        </div>
-                    </div>
-                    <div id="adjustment-controls" class="hidden pt-6">
-                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
-                            <div class="mb-4 text-center">
-                                <h3 class="text-sm font-semibold uppercase tracking-[0.22em] text-orange-200">6. Adjust Picture</h3>
-                                <p class="mt-1 text-xs text-gray-400">Fine-tune position and zoom before downloading.</p>
-                            </div>
-                            <div class="grid gap-4 sm:grid-cols-[0.8fr_1.2fr] sm:items-center">
-                                <div class="rounded-xl border border-white/10 bg-black/20 p-3">
-                                    <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">Zoom</p>
-                                    <div class="flex items-center justify-center gap-3">
-                                        <button id="zoom-in-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold leading-none text-white transition hover:bg-white/15">+</button>
-                                        <button id="zoom-out-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold leading-none text-white transition hover:bg-white/15">−</button>
-                                    </div>
-                                </div>
-                                <div class="rounded-xl border border-white/10 bg-black/20 p-3">
-                                    <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">Move</p>
-                                    <div class="grid w-full grid-cols-3 justify-items-center gap-2">
-                                        <div></div>
-                                        <button id="up-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">↑</button>
-                                        <div></div>
-                                        <button id="left-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">←</button>
-                                        <button id="reset-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-red-400/20 bg-red-600/80 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-red-600">R</button>
-                                        <button id="right-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">→</button>
-                                        <div></div>
-                                        <button id="down-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">↓</button>
-                                        <div></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-4 pt-6">
-                        <div>
-                            <p class="mb-2 text-center text-xs text-gray-400 no-select">Tip: Long-press the image or use the button below to save!</p>
-                            <button id="download-btn" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 disabled:bg-gray-600 disabled:shadow-none" disabled><span class="icon-badge rounded-md bg-white/10">⬇</span>Download Photo</button>
-                            <p id="download-error" class="h-5 text-center text-sm text-red-400"></p>
-                        </div>
-                        <div>
-                            <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2 no-select">Generated Caption</label>
-                            <div id="caption-output" class="max-h-80 w-full overflow-y-auto rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-white whitespace-pre-wrap"></div>
-                            <button id="copy-caption-btn" class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2 font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 disabled:bg-gray-600 disabled:shadow-none" disabled><span class="icon-badge rounded-md bg-white/10">⧉</span>Copy Caption</button>
-                            <div id="copy-feedback" class="mt-2 text-center text-sm text-green-400 h-5"></div>
-                        </div>
+                        <label for="caption-output" class="form-label no-select" style="margin-bottom:0.6rem;">Generated Caption</label>
+                        <div id="caption-output" class="caption-box" role="region" aria-live="polite"></div>
+                        <button id="copy-caption-btn" class="btn btn-secondary" style="margin-top:0.6rem;" disabled>
+                            <span class="btn-icon">⧉</span> Copy Caption
+                        </button>
+                        <p id="copy-feedback" class="feedback-msg feedback-success"></p>
                     </div>
                 </main>
-            </div>
-        </div>
 
-        <footer class="mt-8 border-t-4 border-yellow-300 bg-[#5a3014] px-4 py-10">
-            <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.08fr_0.92fr_1fr] md:items-start">
-                <div class="text-left">
-                    <p class="pixel-badge text-xs uppercase tracking-[0.28em] text-yellow-200">About This Tool</p>
-                    <h2 class="mt-2 text-2xl font-bold text-white">DPblaster! by DECS</h2>
-                    <p class="mt-3 max-w-md text-sm leading-6 text-gray-100">A Mario-inspired photo creator for LCBA DECS students. Build your profile frame, generate a caption, and download your blast-ready image in a few steps.</p>
-                    <div class="mt-5 grid grid-cols-3 items-center justify-items-center gap-1 rounded-xl border-2 border-yellow-300/30 bg-black/20 p-2 sm:gap-2">
-                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
-                            <img src="acoes.png" alt="ACOES Logo" class="aspect-square h-10 w-10 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-12 sm:w-12" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
-                        </a>
-                        <img src="decs.png" alt="DECS Logo" class="aspect-square h-10 w-10 shrink-0 rounded-lg object-cover border-2 border-yellow-300 sm:h-12 sm:w-12" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
-                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
-                            <img src="ccss.png" alt="CCSS Logo" class="aspect-square h-10 w-10 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-12 sm:w-12" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
-                        </a>
-                    </div>
-                    <p class="mt-4 text-xs text-gray-200">Developed for educational purposes only.</p>
-                </div>
+            </div><!-- /main-grid -->
+        </div><!-- /page-wrapper -->
 
+        <!-- Footer -->
+        <footer>
+            <div class="footer-inner">
+
+                <!-- Col 1: About -->
                 <div>
-                    <p class="pixel-badge text-sm font-semibold text-white">Quick Links</p>
-                    <div class="mt-3 flex flex-col gap-3">
-                        <a href="https://github.com/comsci-decs/DPblaster" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-100 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">⬢</span> Open GitHub Repository</a>
-                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-100 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">f</span> Follow ACOES</a>
-                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-100 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">f</span> Follow CCSS</a>
+                    <p class="footer-eyebrow">About This Tool</p>
+                    <h2 class="footer-heading">DPblaster! by DECS</h2>
+                    <p class="footer-text">A photo creator for LCBA DECS students. Build your profile frame, generate a caption, and download your blast-ready image in a few steps.</p>
+                    <div class="footer-logos">
+                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" title="Follow ACOES">
+                            <img src="acoes.png" alt="ACOES Logo" class="footer-logo-img" decoding="async"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/80x80/000000/FFFFFF?text=ACOES';">
+                        </a>
+                        <img src="decs.png" alt="DECS Logo" class="footer-logo-img center-logo" decoding="async"
+                             onerror="this.onerror=null;this.src='https://placehold.co/80x80/000000/FFFFFF?text=DECS';">
+                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" title="Follow CCSS">
+                            <img src="ccss.png" alt="CCSS Logo" class="footer-logo-img" decoding="async"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/80x80/000000/FFFFFF?text=CCSS';">
+                        </a>
                     </div>
-                    <div class="mt-5 rounded-xl border-2 border-yellow-300/30 bg-black/20 px-4 py-3">
-                        <p class="text-xs uppercase tracking-[0.24em] text-yellow-200">Important Notes</p>
-                        <p class="mt-2 text-xs leading-5 text-gray-100">Best viewed in Chrome, Safari, or Opera. On shared devices, the visitor count remains local to your browser.</p>
-                        <p class="mt-2 text-xs leading-5 text-gray-100"><code class="rounded bg-white/10 px-1.5 py-0.5 text-gray-100">Copyright</code> <span id="copyright-year-line"></span></p>
+                    <p class="footer-meta" style="margin-top:0.85rem;">Developed for educational purposes only.</p>
+                </div>
+
+                <!-- Col 2: Links + Notes -->
+                <div>
+                    <p class="footer-col-title">Quick Links</p>
+                    <nav class="footer-links" aria-label="Footer links">
+                        <a href="https://github.com/comsci-decs/DPblaster" target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <span class="footer-link-icon">⬢</span> GitHub Repository
+                        </a>
+                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <span class="footer-link-icon">f</span> Follow ACOES
+                        </a>
+                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <span class="footer-link-icon">f</span> Follow CCSS
+                        </a>
+                    </nav>
+                    <div class="footer-notice">
+                        <p class="footer-notice-title">Important Notes</p>
+                        <p>Best viewed in Chrome, Safari, or Opera. On shared devices, visitor count remains local to your browser.</p>
+                        <p><code>Copyright</code> <span id="copyright-year-line"></span></p>
                     </div>
                 </div>
 
+                <!-- Col 3: Visitor -->
                 <div>
-                    <p class="pixel-badge text-sm font-semibold text-white">Visitor Count</p>
-                    <div class="mt-3 rounded-2xl border-2 border-yellow-300/30 bg-black/20 px-4 py-4 shadow-lg shadow-black/20">
-                        <p class="text-xs uppercase tracking-[0.24em] text-yellow-200">You are visitor number</p>
-                        <p id="visitor-count" class="mt-2 text-4xl font-bold text-yellow-200">0</p>
-                        <p class="mt-3 text-xs leading-5 text-gray-100">This count is stored locally in your browser and increments each time the page is opened.</p>
+                    <p class="footer-col-title">Visitor Count</p>
+                    <div class="visitor-box">
+                        <p class="visitor-label">You are visitor number</p>
+                        <p id="visitor-count">0</p>
+                        <p class="visitor-note">This count is stored locally in your browser and increments each time the page is opened.</p>
                     </div>
-                    <p class="mt-4 text-xs text-gray-200">Originally developed by ACOES-CCSS 2025-2026.</p>
-                    <p class="mt-2 text-xs text-gray-200">Concept and Design by Michael Ordenes. Graphics by Ickoh Gecolea and Angelic Napa.</p>
+                    <p class="footer-meta">Originally developed by ACOES-CCSS 2025–2026.</p>
+                    <p class="footer-meta">Concept &amp; Design by Michael Ordenes.<br>Graphics by Ickoh Gecolea and Angelic Napa.</p>
                 </div>
+
             </div>
-            <div class="mx-auto mt-8 flex max-w-6xl flex-col gap-2 border-t-2 border-yellow-300/30 pt-4 text-center text-xs text-gray-100 md:flex-row md:items-center md:justify-between md:text-left">
+
+            <div class="footer-bottom">
                 <p>&copy; Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
                 <p>All Rights Reserved.</p>
             </div>
         </footer>
 
-        <div class="fixed bottom-4 right-4 z-50">
-                <img src="decs_logo_small.png" alt="DECS Small Logo" class="aspect-square h-14 w-14 shrink-0 rounded-lg object-cover shadow-lg shadow-black/30" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
+        <!-- Floating Badge -->
+        <div id="floating-badge" role="presentation">
+            <img src="decs_logo_small.png" alt="DECS" loading="lazy" decoding="async"
+                 onerror="this.onerror=null;this.src='https://placehold.co/52x52/000000/FFFFFF?text=DECS';">
         </div>
-    </div>
+
+    </div><!-- /#main-content -->
 
     <script>
-        // --- Browser and System Checks ---
-        (function() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            if (/FBAN|FBAV|Messenger/i.test(userAgent)) {
+        // --- Browser and System Check ---
+        (function () {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            if (/FBAN|FBAV|Messenger/i.test(ua)) {
                 document.getElementById('browser-blocker').style.display = 'flex';
                 document.getElementById('loading-screen').style.display = 'none';
-                
-                const copyBtn = document.getElementById('copy-link-btn');
-                const feedbackDiv = document.getElementById('copy-link-feedback');
-                copyBtn.addEventListener('click', () => {
+                document.getElementById('copy-link-btn').addEventListener('click', () => {
+                    const fb = document.getElementById('copy-link-feedback');
                     navigator.clipboard.writeText(window.location.href).then(() => {
-                        feedbackDiv.textContent = 'Link copied!';
-                        setTimeout(() => { feedbackDiv.textContent = ''; }, 2000);
-                    }, () => {
-                        feedbackDiv.textContent = 'Failed to copy link.';
-                    });
+                        fb.textContent = 'Link copied!';
+                        setTimeout(() => { fb.textContent = ''; }, 2000);
+                    }, () => { fb.textContent = 'Failed to copy.'; });
                 });
                 return;
             }
             document.getElementById('main-content').style.display = 'block';
         })();
 
-        // --- Footer Year Logic ---
-        (function() {
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
-            const schoolYearStart = currentDate.getMonth() >= 5 ? currentYear : currentYear - 1;
-            const schoolYearEnd = schoolYearStart + 1;
-            const copyrightLine = document.getElementById('copyright-year-line');
-
-            if (copyrightLine) {
-                copyrightLine.textContent = `© ${currentYear} (AY-${schoolYearStart}-${schoolYearEnd})`;
-            }
+        // --- Footer Year ---
+        (function () {
+            const d = new Date();
+            const y = d.getFullYear();
+            const s = d.getMonth() >= 5 ? y : y - 1;
+            const el = document.getElementById('copyright-year-line');
+            if (el) el.textContent = `© ${y} (AY-${s}-${s + 1})`;
         })();
 
-        // --- Loading Screen Logic ---
+        // --- Loading Screen ---
         window.addEventListener('load', () => {
-            const loadingScreen = document.getElementById('loading-screen');
+            const ls = document.getElementById('loading-screen');
             setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 1500);
+                ls.style.opacity = '0';
+                setTimeout(() => { ls.style.display = 'none'; }, 500);
+            }, 1400);
         });
 
-        // --- Sticky Header Scroll Logic ---
+        // --- Sticky Header ---
         const header = document.getElementById('app-header');
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 50);
-        });
-        
-        // --- Visitor Count Logic ---
-        let count = localStorage.getItem('visitorCount') || 0;
-        count = parseInt(count) + 1;
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('visitor-count').textContent = count;
+        }, { passive: true });
 
-        // --- DOM Element References ---
-        const nameInput = document.getElementById('name-input');
-        const sectionSelect = document.getElementById('section-select');
-        const frameButtons = document.querySelectorAll('.frame-btn');
-        const imageUploadBtn = document.getElementById('image-upload-btn');
-        const fileNameDisplay = document.getElementById('file-name');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        // --- Visitor Count ---
+        let vc = parseInt(localStorage.getItem('visitorCount') || '0') + 1;
+        localStorage.setItem('visitorCount', vc);
+        document.getElementById('visitor-count').textContent = vc;
+
+        // --- Frame Placeholder SVG ---
+        function framePlaceholderSvg(label) {
+            const safe = String(label).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="${safe}">
+                <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#111827"/><stop offset="100%" stop-color="#4b5563"/></linearGradient></defs>
+                <rect width="600" height="600" rx="44" fill="url(#bg)"/>
+                <rect x="28" y="28" width="544" height="544" rx="36" fill="none" stroke="#f97316" stroke-width="12" stroke-dasharray="28 18" opacity="0.85"/>
+                <text x="50%" y="47%" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="700">${safe}</text>
+                <text x="50%" y="56%" text-anchor="middle" fill="#d1d5db" font-family="Inter, Arial, sans-serif" font-size="22">Preview unavailable</text>
+            </svg>`;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
+        // --- DOM Refs ---
+        const nameInput         = document.getElementById('name-input');
+        const sectionSelect     = document.getElementById('section-select');
+        const frameButtons      = document.querySelectorAll('.frame-btn');
+        const imageUploadBtn    = document.getElementById('image-upload-btn');
+        const fileNameDisplay   = document.getElementById('file-name');
+        const canvas            = document.getElementById('canvas');
+        const ctx               = canvas.getContext('2d');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
-        const previewLoader = document.getElementById('preview-loader');
-        const downloadBtn = document.getElementById('download-btn');
-        const downloadError = document.getElementById('download-error');
-        const captionOutput = document.getElementById('caption-output');
-        const copyCaptionBtn = document.getElementById('copy-caption-btn');
-        const copyFeedback = document.getElementById('copy-feedback');
-        const adjustmentControls = document.getElementById('adjustment-controls');
-        const upBtn = document.getElementById('up-btn');
-        const downBtn = document.getElementById('down-btn');
-        const leftBtn = document.getElementById('left-btn');
-        const rightBtn = document.getElementById('right-btn');
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const resetBtn = document.getElementById('reset-btn');
+        const previewLoader     = document.getElementById('preview-loader');
+        const downloadBtn       = document.getElementById('download-btn');
+        const downloadError     = document.getElementById('download-error');
+        const captionOutput     = document.getElementById('caption-output');
+        const copyCaptionBtn    = document.getElementById('copy-caption-btn');
+        const copyFeedback      = document.getElementById('copy-feedback');
+        const adjustPanel       = document.getElementById('adjustment-controls');
+        const upBtn             = document.getElementById('up-btn');
+        const downBtn           = document.getElementById('down-btn');
+        const leftBtn           = document.getElementById('left-btn');
+        const rightBtn          = document.getElementById('right-btn');
+        const zoomInBtn         = document.getElementById('zoom-in-btn');
+        const zoomOutBtn        = document.getElementById('zoom-out-btn');
+        const resetBtn          = document.getElementById('reset-btn');
 
-        // --- State Variables ---
+        // --- State ---
         let selectedFrameSrc = null;
-        let userImageSrc = null;
+        let userImageSrc     = null;
         let scale = 1.0, offsetX = 0, offsetY = 0;
         const panStep = 10, scaleStep = 0.1;
         let pressTimer = null;
         let currentImageObjectUrl = null;
 
         // --- Image Objects ---
-        const frameImage = new Image();
-        frameImage.crossOrigin = "Anonymous";
-        const uploadedImage = new Image();
-        uploadedImage.crossOrigin = "Anonymous";
+        const frameImage    = new Image(); frameImage.crossOrigin    = 'Anonymous';
+        const uploadedImage = new Image(); uploadedImage.crossOrigin = 'Anonymous';
 
-        // --- Core Drawing and State Management ---
+        // --- Drawing ---
         function drawCanvas() {
             if (!frameImage.src || !uploadedImage.src) return;
 
             previewLoader.style.display = 'none';
-            canvasPlaceholder.classList.add('hidden');
-            canvas.classList.remove('hidden');
-            adjustmentControls.classList.remove('hidden');
+            canvasPlaceholder.style.display = 'none';
+            canvas.classList.add('visible');
+            adjustPanel.classList.add('visible');
             downloadBtn.disabled = false;
 
-            const canvasSize = canvas.width;
-            ctx.clearRect(0, 0, canvasSize, canvasSize);
+            const sz = canvas.width;
+            ctx.clearRect(0, 0, sz, sz);
 
-            const imgWidth = uploadedImage.width;
-            const imgHeight = uploadedImage.height;
-            const imgAspectRatio = imgWidth / imgHeight;
+            const iw = uploadedImage.width, ih = uploadedImage.height;
+            const ar = iw / ih;
+            let sw = (ar > 1 ? ih : iw) * scale;
+            let sh = sw;
+            let sx = (iw - sw) / 2 + offsetX;
+            let sy = (ih - sh) / 2 + offsetY;
 
-            let sWidth = imgAspectRatio > 1 ? imgHeight : imgWidth;
-            let sHeight = sWidth;
-
-            sWidth *= scale;
-            sHeight *= scale;
-            
-            let sx = (imgWidth - sWidth) / 2 + offsetX;
-            let sy = (imgHeight - sHeight) / 2 + offsetY;
-
-            ctx.drawImage(uploadedImage, sx, sy, sWidth, sHeight, 0, 0, canvasSize, canvasSize);
-            ctx.drawImage(frameImage, 0, 0, canvasSize, canvasSize);
+            ctx.drawImage(uploadedImage, sx, sy, sw, sh, 0, 0, sz, sz);
+            ctx.drawImage(frameImage, 0, 0, sz, sz);
         }
 
         function attemptToDraw() {
             if (selectedFrameSrc && userImageSrc) {
-                // Show loader immediately when an attempt is made
                 previewLoader.style.display = 'block';
-                canvas.classList.add('hidden');
-                canvasPlaceholder.classList.add('hidden');
-
-                // Check if images are already loaded in cache
-                if (frameImage.complete && uploadedImage.complete) {
-                    drawCanvas();
-                }
+                canvas.classList.remove('visible');
+                canvasPlaceholder.style.display = 'none';
+                if (frameImage.complete && uploadedImage.complete) drawCanvas();
             }
         }
-        
-        frameImage.onload = attemptToDraw;
+
+        frameImage.onload    = attemptToDraw;
         uploadedImage.onload = attemptToDraw;
 
         window.addEventListener('beforeunload', () => {
-            if (currentImageObjectUrl) {
-                URL.revokeObjectURL(currentImageObjectUrl);
-                currentImageObjectUrl = null;
-            }
+            if (currentImageObjectUrl) { URL.revokeObjectURL(currentImageObjectUrl); }
         });
 
+        // --- Caption ---
         function updateCaption() {
-            const name = nameInput.value.trim();
+            const name    = nameInput.value.trim();
             const section = sectionSelect.value;
             copyCaptionBtn.disabled = !(name && section);
             if (name && section) {
@@ -477,118 +1433,90 @@
             }
         }
 
-        // --- Save/Download Function ---
+        // --- Download ---
         function downloadImage() {
             if (downloadBtn.disabled) return;
             downloadError.textContent = '';
-
             canvas.toBlob((blob) => {
-                if (!blob) {
-                    downloadError.textContent = 'Error: Could not create image.';
-                    return;
-                }
-
-                const url = URL.createObjectURL(blob);
+                if (!blob) { downloadError.textContent = 'Error: Could not create image.'; return; }
+                const url      = URL.createObjectURL(blob);
                 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
                 if (isMobile) {
-                    const newTab = window.open(url, '_blank');
-                    if (!newTab) {
-                        downloadError.textContent = 'Please disable your pop-up blocker to save the image.';
-                    }
+                    const tab = window.open(url, '_blank');
+                    if (!tab) downloadError.textContent = 'Please disable your pop-up blocker to save the image.';
                 } else {
-                    const link = document.createElement('a');
-                    link.download = 'dpblast_profile.png';
-                    link.href = url;
-                    link.click();
+                    const a = document.createElement('a');
+                    a.download = 'dpblast_profile.png';
+                    a.href = url;
+                    a.click();
                 }
-
                 setTimeout(() => URL.revokeObjectURL(url), 10000);
             }, 'image/png');
         }
-        
-        // --- Event Listeners Setup ---
-        nameInput.addEventListener('keyup', updateCaption);
+
+        // --- Event Listeners ---
+        nameInput.addEventListener('input', updateCaption);
         sectionSelect.addEventListener('change', updateCaption);
 
-        frameButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                frameButtons.forEach(btn => btn.firstElementChild.classList.remove('frame-selected'));
-                button.firstElementChild.classList.add('frame-selected');
-                selectedFrameSrc = button.dataset.frameSrc;
-                frameImage.src = selectedFrameSrc; // This will trigger onload if not cached
+        frameButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                frameButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed','true');
+                selectedFrameSrc = btn.dataset.frameSrc;
+                frameImage.src   = selectedFrameSrc;
                 attemptToDraw();
             });
         });
 
-        imageUploadBtn.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                if (currentImageObjectUrl) {
-                    URL.revokeObjectURL(currentImageObjectUrl);
-                    currentImageObjectUrl = null;
-                }
-
-                scale = 1.0; offsetX = 0; offsetY = 0;
-                currentImageObjectUrl = URL.createObjectURL(file);
-                userImageSrc = currentImageObjectUrl;
-                uploadedImage.src = userImageSrc;
-                attemptToDraw();
-                fileNameDisplay.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
-            }
+        imageUploadBtn.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (currentImageObjectUrl) URL.revokeObjectURL(currentImageObjectUrl);
+            scale = 1.0; offsetX = 0; offsetY = 0;
+            currentImageObjectUrl = URL.createObjectURL(file);
+            userImageSrc = currentImageObjectUrl;
+            uploadedImage.src = userImageSrc;
+            attemptToDraw();
+            fileNameDisplay.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '…' : file.name;
         });
 
         downloadBtn.addEventListener('click', downloadImage);
-        
-        // --- Long Press Listeners ---
+
+        // Long press on canvas
         function startPress(e) {
             if (downloadBtn.disabled) return;
-            // Prevent default browser actions like context menu or text selection
             e.preventDefault();
-            pressTimer = setTimeout(downloadImage, 800); // 800ms for long press
+            pressTimer = setTimeout(downloadImage, 800);
         }
+        function cancelPress() { clearTimeout(pressTimer); }
 
-        function cancelPress() {
-            clearTimeout(pressTimer);
-        }
-
-        // Attach listeners for both mouse and touch events
-        canvas.addEventListener('mousedown', startPress);
-        canvas.addEventListener('mouseup', cancelPress);
+        canvas.addEventListener('mousedown',  startPress);
+        canvas.addEventListener('mouseup',    cancelPress);
         canvas.addEventListener('mouseleave', cancelPress);
-        // Use { passive: false } to allow preventDefault() on touch devices
-        canvas.addEventListener('touchstart', startPress, { passive: false });
-        canvas.addEventListener('touchend', cancelPress);
-        canvas.addEventListener('touchmove', cancelPress); // Cancel if the finger moves
+        canvas.addEventListener('touchstart', startPress,   { passive: false });
+        canvas.addEventListener('touchend',   cancelPress);
+        canvas.addEventListener('touchmove',  cancelPress);
 
-        // Adjustment Listeners
-        upBtn.addEventListener('click', () => { offsetY -= panStep; drawCanvas(); });
-        downBtn.addEventListener('click', () => { offsetY += panStep; drawCanvas(); });
-        leftBtn.addEventListener('click', () => { offsetX -= panStep; drawCanvas(); });
-        rightBtn.addEventListener('click', () => { offsetX += panStep; drawCanvas(); });
-        zoomInBtn.addEventListener('click', () => { scale += scaleStep; drawCanvas(); });
-        zoomOutBtn.addEventListener('click', () => { if (scale - scaleStep > 0.1) scale -= scaleStep; drawCanvas(); });
-        resetBtn.addEventListener('click', () => { scale = 1.0; offsetX = 0; offsetY = 0; drawCanvas(); });
-        
+        // Adjustment controls
+        upBtn.addEventListener('click',     () => { offsetY -= panStep;  drawCanvas(); });
+        downBtn.addEventListener('click',   () => { offsetY += panStep;  drawCanvas(); });
+        leftBtn.addEventListener('click',   () => { offsetX -= panStep;  drawCanvas(); });
+        rightBtn.addEventListener('click',  () => { offsetX += panStep;  drawCanvas(); });
+        zoomInBtn.addEventListener('click', () => { scale   += scaleStep; drawCanvas(); });
+        zoomOutBtn.addEventListener('click',() => { if (scale - scaleStep > 0.1) scale -= scaleStep; drawCanvas(); });
+        resetBtn.addEventListener('click',  () => { scale = 1.0; offsetX = 0; offsetY = 0; drawCanvas(); });
+
+        // Copy caption
         copyCaptionBtn.addEventListener('click', () => {
-            const tempTextarea = document.createElement('textarea');
-            tempTextarea.value = captionOutput.innerText;
-            tempTextarea.setAttribute('readonly', '');
-            tempTextarea.style.position = 'absolute';
-            tempTextarea.style.left = '-9999px';
-            document.body.appendChild(tempTextarea);
-            tempTextarea.select();
-
-            navigator.clipboard.writeText(tempTextarea.value).then(() => {
+            const text = captionOutput.innerText;
+            navigator.clipboard.writeText(text).then(() => {
                 copyFeedback.textContent = 'Caption copied!';
-                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
-                document.body.removeChild(tempTextarea);
-            }, () => {
-                document.body.removeChild(tempTextarea);
+                setTimeout(() => { copyFeedback.textContent = ''; }, 2500);
             });
         });
 
-        // --- Initial Setup ---
+        // --- Init ---
         updateCaption();
     </script>
 </body>
