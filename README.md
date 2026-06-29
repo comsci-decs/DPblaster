@@ -4,24 +4,62 @@ Official Profile Picture Creator for DECS Students
 
 ![DPblaster Banner](dpblast_logo.png)
 
-## Overview
-
-DPblaster! is a responsive web application that allows students to generate official profile pictures for department-wide campaigns, semester launches, and organization activities.
-
-Users can:
-
-- Upload a profile photo
-- Select a department frame
-- Adjust image position and zoom
-- Generate an official caption automatically
-- Download a high-resolution profile picture
-- Copy the generated caption with one click
-
-The application is optimized for both desktop and mobile devices and runs entirely in the browser without requiring a backend server.
+> Developed for the Department of Engineering and Computer Studies (DECS), Laguna College of Business and Arts (LCBA), during Academic Year 2025–2026.
 
 ---
 
-## Features
+## 🌐 Live Demo
+
+Visit the live application:
+
+**http://dpblaster.decs.dpdns.org**
+
+---
+
+## 🏫 About the Project
+
+DPblaster! is a responsive web application developed for the Department of Engineering and Computer Studies (DECS) of Laguna College of Business and Arts (LCBA).
+
+The platform allows students to create official display pictures (DPs) for semester launches, department campaigns, organization activities, and student engagement events.
+
+Users can upload a photo, select an official frame, adjust positioning and zoom, generate a department-approved caption, and download a high-resolution profile picture—all directly from their browser.
+
+No backend server is required, making the application lightweight, fast, and easy to deploy.
+
+---
+
+## 📸 Application Screenshots
+
+### 🖥️ Desktop View
+
+![Desktop View](docs/screenshots/desktop-view.png)
+
+*Full desktop layout featuring creator controls, image adjustment tools, live preview, caption generation, and download functionality.*
+
+---
+
+### 📱 Mobile View
+
+![Mobile View](docs/screenshots/mobile-view.png)
+
+*Responsive mobile interface optimized for smartphones and tablets while maintaining the complete DP creation workflow.*
+
+---
+
+### Screenshot Directory
+
+```text
+docs/
+└── screenshots/
+    ├── desktop-view.png
+    └── mobile-view.png
+```
+
+> Replace the placeholder images with actual screenshots from the application.
+
+---
+
+## ✨ Features
 
 ### 🖼️ Profile Picture Generator
 
@@ -54,37 +92,47 @@ Automatically generates an official DECS DP Blast caption using:
 - Student Name
 - Course Section
 
-Includes:
+Generated captions include:
 
 - Department branding
-- Welcome message
-- Semester campaign message
+- Welcome messages
+- Semester campaign messaging
 - Official hashtags
 
 ### ⬇️ Download System
 
 - One-click download
 - Mobile long-press save support
-- PNG output format
+- PNG image output
+- High-quality export
 
-### 📱 User Experience
+### 📱 Responsive Design
 
-- Modern glassmorphism interface
-- Responsive design
-- Animated loading screen
-- Sticky navigation header
-- Browser compatibility detection
-- Facebook/Messenger browser warning
+- Mobile-first development
+- Tablet support
+- Desktop optimization
+- Adaptive layouts
+- Touch-friendly controls
 
-### 👥 Visitor Tracking
+### 🌐 Browser Compatibility
 
-- Local visitor counter
-- Stored using LocalStorage
-- No external analytics required
+- Google Chrome
+- Microsoft Edge
+- Safari
+- Opera
+
+Includes browser detection for Facebook and Messenger in-app browsers.
+
+### 👥 Visitor Counter
+
+- Local visitor tracking
+- Browser-based storage
+- No external analytics
+- Privacy-friendly implementation
 
 ---
 
-## Technology Stack
+## 🛠️ Technology Stack
 
 ### Frontend
 
@@ -100,17 +148,17 @@ Includes:
 - File API
 - Object URL API
 
-### Design Features
+### Design System
 
-- Responsive Layout
 - Glassmorphism UI
-- Mobile-First Design
+- Responsive Layout
 - CSS Animations
+- Mobile-First Design
 - Accessibility Enhancements
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 ```text
 DPblaster/
@@ -126,12 +174,17 @@ DPblaster/
 ├── cpe_frame.png
 ├── cs_frame.png
 │
+├── docs/
+│   └── screenshots/
+│       ├── desktop-view.png
+│       └── mobile-view.png
+│
 └── README.md
 ```
 
 ---
 
-## Required Assets
+## 📦 Required Assets
 
 | File | Purpose |
 |--------|----------|
@@ -143,96 +196,58 @@ DPblaster/
 | cpe_frame.png | Computer Engineering frame |
 | cs_frame.png | Computer Science frame |
 
----
-
-## Installation
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/comsci-decs/DPblaster.git
-cd DPblaster
-```
-
-### Run Locally
-
-Open:
-
-```text
-index.html
-```
-
-or use a local web server:
-
-```bash
-python -m http.server 8000
-```
-
-Then visit:
-
-```text
-http://localhost:8000
-```
 
 ---
 
-## Usage
+## 📖 Usage
 
 ### Step 1
+
 Enter your full name.
 
 ### Step 2
+
 Select your course and section.
 
 ### Step 3
-Choose a profile frame.
+
+Choose your official department frame.
 
 ### Step 4
+
 Upload your profile photo.
 
 ### Step 5
-Adjust image placement and zoom if needed.
+
+Adjust zoom and positioning.
 
 ### Step 6
-Download your generated profile picture.
+
+Preview the final result.
 
 ### Step 7
-Copy the generated caption and post it.
+
+Download your profile picture.
+
+### Step 8
+
+Copy the generated caption and publish your DP Blast.
 
 ---
 
-## Browser Support
-
-### Recommended Browsers
-
-- Google Chrome
-- Microsoft Edge
-- Safari
-- Opera
-
-### Limited Support
-
-The application will display a warning when opened inside:
-
-- Facebook Browser
-- Messenger Browser
-
-For best results, open the application in a standalone browser.
-
----
-
-## Privacy
+## 🔒 Privacy
 
 DPblaster processes all images locally in the user's browser.
 
-- No photos are uploaded to a server.
-- No personal information is collected.
-- No account is required.
-- Visitor counts are stored locally using browser LocalStorage.
+- No images are uploaded to a server
+- No accounts are required
+- No personal data is collected
+- No cloud processing is performed
+- Visitor counts are stored locally using LocalStorage
 
 ---
 
-## Credits
+## 🙌 Credits
 
 ### Development
 
@@ -243,18 +258,25 @@ DPblaster processes all images locally in the user's browser.
 - Ickoh Gecolea
 - Angelic Napa
 
-### Organizations
+### Developed For
 
-- Department of Engineering and Computer Studies (DECS)
+**Department of Engineering and Computer Studies (DECS)**  
+Laguna College of Business and Arts (LCBA)  
+Academic Year 2025–2026
+
+### Partner Organizations
+
 - Association of Computer Engineering Students (ACOES)
 - Council of Computer Science Students (CCSS)
 
 ---
 
-## License
+## 📜 License
 
-This project is intended for educational and organizational use.
+This project was developed for educational and organizational purposes under the Department of Engineering and Computer Studies (DECS).
 
-All organization logos, branding materials, and campaign assets remain the property of their respective organizations.
+All logos, branding materials, graphics, campaign assets, and related intellectual property remain the property of their respective organizations.
 
-© DECS • ACOES • CCSS • All Rights Reserved
+© 2025–2026 DECS • ACOES • CCSS
+
+All Rights Reserved.
