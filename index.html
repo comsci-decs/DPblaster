@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPblaster!</title>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,8 +12,11 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #9a0200;
-            background-image: linear-gradient(to bottom right, #9a0200, #5c0100);
+            background-color: #7f0a10;
+            background-image:
+                radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 32%),
+                radial-gradient(circle at top right, rgba(239, 68, 68, 0.18), transparent 28%),
+                linear-gradient(135deg, #7f0a10 0%, #4f0206 100%);
         }
         
         #loading-screen {
@@ -54,7 +58,44 @@
         .custom-transition { transition: all 0.3s ease-in-out; }
         .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #F97316; }
         input[type="file"] { display: none; }
-        .glass-container { background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-container { background: rgba(6, 6, 6, 0.28); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+        .section-accent {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-accent::before {
+            content: '';
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            right: 0.75rem;
+            height: 2px;
+            border-radius: 999px;
+            z-index: 0;
+            pointer-events: none;
+            background: linear-gradient(90deg, #f97316, #fb7185, #f97316);
+        }
+
+        .section-accent > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            flex-shrink: 0;
+        }
+
+        .control-btn:focus-visible {
+            outline: 2px solid #f97316;
+            outline-offset: 2px;
+        }
 
         #app-header { transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out; }
         #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 0, 0, 0.4); }
@@ -76,7 +117,7 @@
 
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
+        <img id="loading-logo" src="dpblast_logo.png" alt="DPblast Logo" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/984x300/ffffff/9a0200?text=DPblast!+by+DECS';">
         <div class="loader"></div>
     </div>
     
@@ -105,94 +146,166 @@
         </header>
 
         <div class="container mx-auto px-4 py-8" style="padding-top: 120px;"> 
-            <div class="glass-container flex justify-center items-center gap-4 md:gap-6 mb-8 p-4 rounded-xl max-w-lg mx-auto">
-                <img src="decs.png" alt="DECS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
-                <img src="acoes.png" alt="ACOES Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
-                <img src="ccss.png" alt="CCSS Logo" class="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
-            </div>
+            <section class="section-accent glass-container max-w-6xl mx-auto mb-6 rounded-2xl border border-white/10 bg-black/25 p-6 md:p-8 shadow-2xl">
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="max-w-2xl">
+                        <h1 class="mt-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl">Build your official DECS profile picture in one place.</h1>
+                        <p class="mt-4 max-w-xl text-sm leading-6 text-gray-300 sm:text-base">A responsive creator for mobile and desktop with live preview, caption generation, and one-click download.</p>
+                    </div>
+                    <div class="mt-5 grid grid-cols-3 items-center justify-items-center gap-1 rounded-xl bg-black/20 p-2 sm:gap-2 md:gap-3 md:p-3">
+                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
+                            <img src="acoes.png" alt="ACOES Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
+                        </a>
+                        <img src="decs.png" alt="DECS Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
+                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
+                            <img src="ccss.png" alt="CCSS Logo" class="aspect-square h-13 w-13 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-15 sm:w-15 md:h-24 md:w-24" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
+                        </a>
+                    </div>
+                </div>
+            </section>
 
-            <main class="glass-container max-w-lg mx-auto p-6 md:p-8 rounded-2xl shadow-xl">
-                <div class="space-y-6">
-                    <div>
-                        <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2 no-select">1. Enter Your Name</label>
-                        <input type="text" id="name-input" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
-                    </div>
-                    <div>
-                        <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2 no-select">2. Select Your Section</label>
-                        <select id="section-select" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                            <option value="" disabled selected>Choose your course & section...</option>
-                            <option value="I-CpE1">I-CpE1</option> <option value="II-CpE1">II-CpE1</option> <option value="III-CpE1">III-CpE1</option> <option value="IV-CpE1">IV-CpE1</option>
-                            <option value="I-CS1">I-CS1</option> <option value="II-CS1">II-CS1</option> <option value="III-CS1">III-CS1</option> <option value="IV-CS1">IV-CS1</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">3. Choose Your Frame</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button class="frame-btn" data-frame-src="cpe_frame.png"><img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';"></button>
-                            <button class="frame-btn" data-frame-src="cs_frame.png"><img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';"></button>
+            <div class="grid gap-6 lg:grid-cols-[1fr_1.05fr] items-start">
+                <section class="section-accent glass-container rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="name-input" class="block text-sm font-medium text-gray-300 mb-2 no-select">1. Enter Your Name</label>
+                            <div class="relative">
+                                <span class="icon-badge absolute left-3 top-1/2 -translate-y-1/2 rounded-md bg-orange-500/15 text-orange-200">👤</span>
+                                <input type="text" id="name-input" class="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="e.g., Juan Dela Cruz">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="section-select" class="block text-sm font-medium text-gray-300 mb-2 no-select">2. Select Your Section</label>
+                            <div class="relative">
+                                <span class="icon-badge pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 rounded-md bg-orange-500/15 text-orange-200">▾</span>
+                                <select id="section-select" class="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                <option value="" disabled selected>Choose your course & section...</option>
+                                <option value="I-CpE1">I-CpE1</option> <option value="II-CpE1">II-CpE1</option> <option value="III-CpE1">III-CpE1</option> <option value="IV-CpE1">IV-CpE1</option>
+                                <option value="I-CS1">I-CS1</option> <option value="II-CS1">II-CS1</option> <option value="III-CS1">III-CS1</option> <option value="IV-CS1">IV-CS1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">3. Choose Your Frame</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="frame-btn" data-frame-src="cpe_frame.png"><img src="cpe_frame.png" alt="CPE Frame" class="rounded-lg border-2 border-transparent custom-transition shadow-lg shadow-black/20" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CPE+Frame';"></button>
+                                <button class="frame-btn" data-frame-src="cs_frame.png"><img src="cs_frame.png" alt="CS Frame" class="rounded-lg border-2 border-transparent custom-transition shadow-lg shadow-black/20" onerror="this.onerror=null;this.src='https://placehold.co/500x500/000000/FFFFFF?text=CS+Frame';"></button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="image-upload-btn" class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-center font-semibold text-white shadow-lg shadow-red-500/20 transition hover:bg-red-700 no-select">
+                                <span class="icon-badge rounded-md bg-white/10">⬆</span>
+                                4. Upload Your Picture
+                            </label>
+                            <input type="file" id="image-upload-btn" accept="image/*">
+                            <p id="file-name" class="mt-2 text-center text-sm text-gray-400">No file chosen</p>
                         </div>
                     </div>
-                    <div>
-                        <label for="image-upload-btn" class="w-full inline-block bg-red-600 text-white text-center font-semibold py-3 px-4 rounded-lg cursor-pointer hover:bg-red-700 custom-transition shadow-lg shadow-red-500/20 no-select">4. Upload Your Picture</label>
-                        <input type="file" id="image-upload-btn" accept="image/*">
-                        <p id="file-name" class="text-sm text-gray-400 mt-2 text-center">No file chosen</p>
-                    </div>
+                </section>
+
+                <main class="section-accent glass-container rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl">
                     <div>
                         <h3 class="text-sm font-medium text-gray-300 mb-2 no-select">5. Preview</h3>
-                        <div class="preview-container bg-black/20 rounded-lg flex items-center justify-center aspect-square">
+                        <div class="preview-container flex aspect-square items-center justify-center rounded-lg bg-black/20 ring-1 ring-white/5">
                            <div id="preview-loader" class="preview-loader" style="display: none;"></div>
                            <canvas id="canvas" width="1080" height="1080" class="hidden"></canvas>
-                           <span id="canvas-placeholder" class="text-gray-500 px-4 text-center">Your image will appear here</span>
+                           <span id="canvas-placeholder" class="px-4 text-center text-gray-500">Your image will appear here</span>
                         </div>
                     </div>
-                    <div id="adjustment-controls" class="hidden">
-                        <h3 class="text-sm font-medium text-gray-300 mb-2 text-center no-select">6. Adjust Picture</h3>
-                        <div class="flex items-center justify-center gap-4">
-                            <div class="flex flex-col gap-2">
-                                <button id="zoom-in-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none text-lg">+</button>
-                                <button id="zoom-out-btn" class="control-btn bg-gray-700/50 p-2 rounded-full leading-none text-lg">-</button>
+                    <div id="adjustment-controls" class="hidden pt-6">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+                            <div class="mb-4 text-center">
+                                <h3 class="text-sm font-semibold uppercase tracking-[0.22em] text-orange-200">6. Adjust Picture</h3>
+                                <p class="mt-1 text-xs text-gray-400">Fine-tune position and zoom before downloading.</p>
                             </div>
-                            <div class="grid grid-cols-3 gap-1 w-24">
-                                <div></div><button id="up-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↑</button><div></div>
-                                <button id="left-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">←</button>
-                                <button id="reset-btn" class="control-btn bg-red-600/80 p-2 rounded-full text-xs">R</button>
-                                <button id="right-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">→</button>
-                                <div></div><button id="down-btn" class="control-btn bg-gray-700/50 p-2 rounded-md">↓</button><div></div>
+                            <div class="grid gap-4 sm:grid-cols-[0.8fr_1.2fr] sm:items-center">
+                                <div class="rounded-xl border border-white/10 bg-black/20 p-3">
+                                    <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">Zoom</p>
+                                    <div class="flex items-center justify-center gap-3">
+                                        <button id="zoom-in-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold leading-none text-white transition hover:bg-white/15">+</button>
+                                        <button id="zoom-out-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold leading-none text-white transition hover:bg-white/15">−</button>
+                                    </div>
+                                </div>
+                                <div class="rounded-xl border border-white/10 bg-black/20 p-3">
+                                    <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">Move</p>
+                                    <div class="grid w-full grid-cols-3 justify-items-center gap-2">
+                                        <div></div>
+                                        <button id="up-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">↑</button>
+                                        <div></div>
+                                        <button id="left-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">←</button>
+                                        <button id="reset-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-red-400/20 bg-red-600/80 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-red-600">R</button>
+                                        <button id="right-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">→</button>
+                                        <div></div>
+                                        <button id="down-btn" class="control-btn inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-lg font-semibold text-white transition hover:bg-white/15">↓</button>
+                                        <div></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="space-y-4">
+                    <div class="space-y-4 pt-6">
                         <div>
-                            <p class="text-xs text-gray-400 text-center mb-2 no-select">Tip: Long-press the image or use the button below to save!</p>
-                            <button id="download-btn" class="w-full bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Download Photo</button>
-                            <p id="download-error" class="text-sm text-red-400 text-center h-5"></p>
+                            <p class="mb-2 text-center text-xs text-gray-400 no-select">Tip: Long-press the image or use the button below to save!</p>
+                            <button id="download-btn" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 disabled:bg-gray-600 disabled:shadow-none" disabled><span class="icon-badge rounded-md bg-white/10">⬇</span>Download Photo</button>
+                            <p id="download-error" class="h-5 text-center text-sm text-red-400"></p>
                         </div>
                         <div>
                             <label for="caption-output" class="block text-sm font-medium text-gray-300 mb-2 no-select">Generated Caption</label>
-                            <textarea id="caption-output" rows="12" class="w-full bg-black/20 border border-gray-600 text-white rounded-lg px-3 py-2" readonly></textarea>
-                            <button id="copy-caption-btn" class="w-full mt-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 custom-transition shadow-lg shadow-orange-500/20 disabled:bg-gray-600 disabled:shadow-none" disabled>Copy Caption</button>
-                            <div id="copy-feedback" class="text-sm text-green-400 mt-2 text-center h-5"></div>
+                            <div id="caption-output" class="max-h-80 w-full overflow-y-auto rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-white whitespace-pre-wrap"></div>
+                            <button id="copy-caption-btn" class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2 font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 disabled:bg-gray-600 disabled:shadow-none" disabled><span class="icon-badge rounded-md bg-white/10">⧉</span>Copy Caption</button>
+                            <div id="copy-feedback" class="mt-2 text-center text-sm text-green-400 h-5"></div>
                         </div>
                     </div>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
 
-        <footer class="text-center py-10 px-4 mt-8 bg-black/30">
-            <p class="text-gray-300 font-semibold mb-4">Follow Us on Facebook!</p>
-            <div class="flex justify-center flex-wrap gap-4 mb-6">
-                 <a href="https://www.facebook.com/acoeslcba" target="_blank" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition">Follow ACOES</a>
-                 <a href="https://www.facebook.com/ccsslcba" target="_blank" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 custom-transition">Follow CCSS</a>
+        <footer class="mt-8 border-t border-white/10 bg-black/35 px-4 py-10">
+            <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr] md:items-start">
+                <div class="text-left">
+                    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-orange-200">Connect</p>
+                    <h2 class="mt-2 text-2xl font-bold text-white">Stay linked with DECS.</h2>
+                    <p class="mt-3 max-w-md text-sm leading-6 text-gray-300">Quick access to the GitHub repo, official pages, and event info in one clean footer area.</p>
+                    <div class="mt-5 grid grid-cols-3 items-center justify-items-center gap-1 rounded-xl bg-white/5 p-2 sm:gap-2">
+                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
+                            <img src="acoes.png" alt="ACOES Logo" class="aspect-square h-11 w-11 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-13 sm:w-13" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=ACOES';">
+                        </a>
+                        <img src="decs.png" alt="DECS Logo" class="aspect-square h-11 w-11 shrink-0 rounded-lg object-cover sm:h-13 sm:w-13" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=DECS';">
+                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="group block rounded-xl outline-none ring-0 focus-visible:ring-2 focus-visible:ring-orange-400">
+                            <img src="ccss.png" alt="CCSS Logo" class="aspect-square h-11 w-11 shrink-0 rounded-lg object-cover transition duration-300 group-hover:scale-105 sm:h-13 sm:w-13" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/120x120/000000/FFFFFF?text=CCSS';">
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-sm font-semibold text-white">Official Links</p>
+                    <div class="mt-3 flex flex-col gap-3">
+                        <a href="https://github.com/comsci-decs/DPblaster" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-300 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">⬢</span> GitHub Repo</a>
+                        <a href="https://www.facebook.com/acoeslcba" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-300 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">f</span> Follow ACOES</a>
+                        <a href="https://www.facebook.com/ccsslcba" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-300 transition hover:text-white"><span class="icon-badge rounded-md bg-white/10">f</span> Follow CCSS</a>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-sm font-semibold text-white">Visitors</p>
+                    <div class="mt-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+                        <p class="text-xs uppercase tracking-[0.24em] text-gray-400">You are visitor number</p>
+                        <p id="visitor-count" class="mt-1 text-2xl font-bold text-orange-200">0</p>
+                    </div>
+                    <p class="mt-4 text-xs text-gray-400">Developed for educational purposes only.</p>
+                    <p class="mt-2 text-xs text-gray-400"><code class="rounded bg-white/5 px-1.5 py-0.5 text-gray-200">Copyright</code> <span id="copyright-year-line"></span></p>
+                    <p class="mt-2 text-xs text-gray-400">Originally developed by ACOES-CCSS 2025-2026.</p>
+                    <p class="mt-2 text-xs text-gray-500">Concept and Design by Michael Ordenes. Graphics by Ickoh Gecolea and Angelic Napa.</p>
+                </div>
             </div>
-            <p class="text-sm text-gray-300 font-semibold">2025 © DEPARTMENT OF ENGINEERING AND COMPUTER STUDIES</p>
-            <p class="text-xs text-gray-400 mt-1">&copy; Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
-            <p class="text-xs text-gray-400 mt-4">Developed by ICKOH GECOLEA (PRO-CpE) and MICHAEL ORDENES (PRO-CS).</p>
-            <div class="mt-6 text-center"><p class="text-xs text-gray-400">You are visitor number:</p><p id="visitor-count" class="text-lg font-bold text-white">0</p></div>
-            <p class="text-xs text-gray-500 mt-4">All Rights Reserved.</p>
+            <div class="mx-auto mt-8 flex max-w-6xl flex-col gap-2 border-t border-white/10 pt-4 text-center text-xs text-gray-500 md:flex-row md:items-center md:justify-between md:text-left">
+                <p>&copy; Association of Computer Engineering Students (BSCpE) &bull; Council of Computer Science Students (BSCS)</p>
+                <p>All Rights Reserved.</p>
+            </div>
         </footer>
 
         <div class="fixed bottom-4 right-4 z-50">
-            <img src="decs_logo_small.png" alt="DECS Small Logo" class="w-16 h-16" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
+                <img src="decs_logo_small.png" alt="DECS Small Logo" class="aspect-square h-14 w-14 shrink-0 rounded-lg object-cover shadow-lg shadow-black/30" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/64x64/000000/FFFFFF?text=DECS';">
         </div>
     </div>
 
@@ -217,6 +330,19 @@
                 return;
             }
             document.getElementById('main-content').style.display = 'block';
+        })();
+
+        // --- Footer Year Logic ---
+        (function() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const schoolYearStart = currentDate.getMonth() >= 5 ? currentYear : currentYear - 1;
+            const schoolYearEnd = schoolYearStart + 1;
+            const copyrightLine = document.getElementById('copyright-year-line');
+
+            if (copyrightLine) {
+                copyrightLine.textContent = `© ${currentYear} (AY-${schoolYearStart}-${schoolYearEnd})`;
+            }
         })();
 
         // --- Loading Screen Logic ---
@@ -272,6 +398,7 @@
         let scale = 1.0, offsetX = 0, offsetY = 0;
         const panStep = 10, scaleStep = 0.1;
         let pressTimer = null;
+        let currentImageObjectUrl = null;
 
         // --- Image Objects ---
         const frameImage = new Image();
@@ -326,15 +453,22 @@
         frameImage.onload = attemptToDraw;
         uploadedImage.onload = attemptToDraw;
 
+        window.addEventListener('beforeunload', () => {
+            if (currentImageObjectUrl) {
+                URL.revokeObjectURL(currentImageObjectUrl);
+                currentImageObjectUrl = null;
+            }
+        });
+
         function updateCaption() {
             const name = nameInput.value.trim();
             const section = sectionSelect.value;
             copyCaptionBtn.disabled = !(name && section);
             if (name && section) {
                 const course = section.includes('CpE') ? 'BS Computer Engineering' : 'BS Computer Science';
-                captionOutput.value = `GAME NA, READY NA!</b><br><br> Meet <b>${name}</b>, a student from <b>${section}</b> (<b>${course}</b>), proudly learning and thriving at <b>𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬</b>!<br><br> A new academic year means a fresh chance to learn, grow, and take on exciting challenges in the ever-evolving world of technology and computing.<br><br> As future engineers, developers, and innovators, we're not just here to study—we're here to build solutions, create opportunities, and shape the future through technology.<br><br> Let's start this semester with confidence, determination, and passion as proud members of <b>𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒</b>.<br> Be part of the official DP Blast as we officially welcome the <b>First Semester of A.Y. 2026–2027</b>!<br><br> <b>GAME NA, READY NA! TARA NA!</b><br> The future is waiting—let's level up, code with purpose, and make this semester one to remember.<br><br> #GameNaReadyNaTaraNa<br> #CodeReady<br> #EngineerTheFuture<br> #TatakDECS<br> #LCBAians<br> #CSStrong<br> #CpEBuilds`;
+                captionOutput.innerHTML = `<b>GAME NA, READY NA!</b><br><br>Meet <b>${name}</b>, a student from <b>${section}</b> (<b>${course}</b>), proudly learning and thriving at <b>𝐋𝐚𝐠𝐮𝐧𝐚 𝐂𝐨𝐥𝐥𝐞𝐠𝐞 𝐨𝐟 𝐁𝐮𝐬𝐢𝐧𝐞𝐬𝐬 𝐚𝐧𝐝 𝐀𝐫𝐭𝐬</b>!<br><br>A new academic year means a fresh chance to learn, grow, and take on exciting challenges in the ever-evolving world of technology and computing.<br><br>As future engineers, developers, and innovators, we're not just here to study—we're here to build solutions, create opportunities, and shape the future through technology.<br><br>Let's start this semester with confidence, determination, and passion as proud members of <b>𝐓𝐞𝐚𝐦 𝐃𝐄𝐂𝐒</b>.<br>Be part of the official DP Blast as we officially welcome the <b>First Semester of A.Y. 2026–2027</b>!<br><br><b>GAME NA, READY NA! TARA NA!</b><br>The future is waiting—let's level up, code with purpose, and make this semester one to remember.<br><br>#GameNaReadyNaTaraNa<br>#CodeReady<br>#EngineerTheFuture<br>#TatakDECS<br>#LCBAians<br>#CSStrong<br>#CpEBuilds`;
             } else {
-                captionOutput.value = '';
+                captionOutput.innerHTML = '';
             }
         }
 
@@ -342,40 +476,30 @@
         function downloadImage() {
             if (downloadBtn.disabled) return;
             downloadError.textContent = '';
-            
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-            // On mobile, the most robust method is to open the image in a new tab for the user to save.
-            if (isMobile) {
-                try {
-                    canvas.toBlob(function(blob) {
-                        if (!blob) {
-                            downloadError.textContent = "Error: Could not create image.";
-                            return;
-                        }
-                        const url = URL.createObjectURL(blob);
-                        const newTab = window.open(url, '_blank');
-                        if (!newTab) {
-                            downloadError.textContent = "Please disable your pop-up blocker to save the image.";
-                        }
-                        // Clean up the blob URL after a short delay
-                        setTimeout(() => URL.revokeObjectURL(url), 10000);
-                    }, 'image/png');
-                } catch (error) {
-                    downloadError.textContent = "An error occurred. Please try a different browser.";
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    downloadError.textContent = 'Error: Could not create image.';
+                    return;
                 }
-                return;
-            }
 
-            // On desktop, trigger a direct download.
-            try {
-                const link = document.createElement('a');
-                link.download = 'dpblast_profile.png';
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            } catch (error) {
-                 downloadError.textContent = "Download failed. Please try again.";
-            }
+                const url = URL.createObjectURL(blob);
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    const newTab = window.open(url, '_blank');
+                    if (!newTab) {
+                        downloadError.textContent = 'Please disable your pop-up blocker to save the image.';
+                    }
+                } else {
+                    const link = document.createElement('a');
+                    link.download = 'dpblast_profile.png';
+                    link.href = url;
+                    link.click();
+                }
+
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
+            }, 'image/png');
         }
         
         // --- Event Listeners Setup ---
@@ -395,14 +519,16 @@
         imageUploadBtn.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    scale = 1.0; offsetX = 0; offsetY = 0; // Reset adjustments
-                    userImageSrc = e.target.result;
-                    uploadedImage.src = userImageSrc; // This will trigger onload
-                    attemptToDraw();
-                };
-                reader.readAsDataURL(file);
+                if (currentImageObjectUrl) {
+                    URL.revokeObjectURL(currentImageObjectUrl);
+                    currentImageObjectUrl = null;
+                }
+
+                scale = 1.0; offsetX = 0; offsetY = 0;
+                currentImageObjectUrl = URL.createObjectURL(file);
+                userImageSrc = currentImageObjectUrl;
+                uploadedImage.src = userImageSrc;
+                attemptToDraw();
                 fileNameDisplay.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
             }
         });
@@ -440,10 +566,20 @@
         resetBtn.addEventListener('click', () => { scale = 1.0; offsetX = 0; offsetY = 0; drawCanvas(); });
         
         copyCaptionBtn.addEventListener('click', () => {
-            captionOutput.select();
-            navigator.clipboard.writeText(captionOutput.value).then(() => {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = captionOutput.innerText;
+            tempTextarea.setAttribute('readonly', '');
+            tempTextarea.style.position = 'absolute';
+            tempTextarea.style.left = '-9999px';
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+
+            navigator.clipboard.writeText(tempTextarea.value).then(() => {
                 copyFeedback.textContent = 'Caption copied!';
                 setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+                document.body.removeChild(tempTextarea);
+            }, () => {
+                document.body.removeChild(tempTextarea);
             });
         });
 
